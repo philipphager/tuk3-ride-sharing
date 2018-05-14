@@ -1,11 +1,11 @@
 import React from 'react';
-import Map from './Map';
+import ResizableMap from './Map';
 
 const App = () => {
   return (
-    <div>
+    <div style={{ width: '100vw', height: '100vh' }}>
       <h2 id="heading">Ride Sharing Prototype</h2>
-      <Map />
+      <ResizableMap />
     </div>
   );
 };
