@@ -1,9 +1,10 @@
-import pyhdb
-import socket
 import logging
 import os
+import socket
 
-SCHEMA = 'TAXI'
+import pyhdb
+
+from app.database.const import DB_SCHEMA
 
 
 class HanaConnection(object):
@@ -23,7 +24,7 @@ class HanaConnection(object):
             )
             self.connection.connect()
             self.cursor = self.connection.cursor()
-            self.cursor.execute('SET SCHEMA {}'.format(SCHEMA))
+            self.cursor.execute('SET SCHEMA {}'.format(DB_SCHEMA))
         except socket.gaierror as e:
             logging.error('Database instance is not available!')
             raise e
