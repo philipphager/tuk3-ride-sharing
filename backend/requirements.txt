@@ -1,3 +1,0 @@
--e git+https://github.com/hpi-epic/pyhana.git#egg=elasticutils
-Flask==1.0.2
-Flask_Cors==3.0.4
