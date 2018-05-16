@@ -16,5 +16,9 @@ Make sure you have the latest Stable or LTS version of Node.js installed.
 - `npm run test:watch` - run all tests in watch mode
 - `npm run coverage` - generate code coverage report in the `coverage` folder
 
+## MapboxAccessToken
+
+Please add your MapboxAccessToken from [Mapboax Install Page](https://www.mapbox.com/install/) into the file _.env_.
+
 ## Licence
 Original project _react-webpack-boilerplate_ is available under MIT.
