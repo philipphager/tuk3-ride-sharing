@@ -11,9 +11,10 @@ def get_all_trajectory_ids_sql():
 def get_trajectory_by_id_sql(trajectory_id):
     union_string = 'UNION ALL'
     filter_string = f'''WHERE TID = {trajectory_id}'''
-    sql = f'''
+    subquery = f'''
             SELECT TID,
             FGID,
+            0 AS FID,
             Ix AS LON,
             Iy AS LAT
             FROM Taxi.{DB_TABLE}
@@ -22,14 +23,26 @@ def get_trajectory_by_id_sql(trajectory_id):
         '''
 
     for i in range(1, 119):
-        sql += f'''
+        subquery += f'''
             SELECT TID,
             FGID,
+            {i} AS FID,
             Ix + P{i}x AS LON,
             Iy + P{i}y AS LAT
             FROM Taxi.{DB_TABLE}
             {filter_string}
         '''
-        sql += union_string if i < 118 else ''
+        subquery += union_string if i < 118 else ''
 
+    sql = f'''
+        SELECT TID,
+            FGID,
+            FID,
+            LON,
+            LAT
+            FROM (
+              {subquery}
+            )
+        ORDER BY FGID, FID
+    '''
     return sql
