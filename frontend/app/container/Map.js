@@ -4,7 +4,9 @@ import Dimensions from 'react-dimensions';
 import ReactMapGL from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { connect } from 'react-redux';
-import * as actions from '../actions';
+import * as actions from '../actions/mapActions';
+import DeckGlLayer from '../components/DeckGLLayer';
+import data from './Trajectory_GEOJson_Fixed_Coordinates_Broken_Timestamps';
 
 const ResizableMap = Dimensions({
   elementResize: true,
@@ -36,7 +38,9 @@ const ResizableMap = Dimensions({
       <ReactMapGL
         {...this.props.viewport}
         onViewportChange={viewport => this.handleViewportChange(viewport)}
-      />
+      >
+        <DeckGlLayer data={data} viewport={this.props.viewport} />
+      </ReactMapGL>
     );
   }
 });

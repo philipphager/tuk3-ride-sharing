@@ -29,9 +29,11 @@ const config = {
     hot: true,
     contentBase: resolve(__dirname, 'build'),
     historyApiFallback: true,
-    publicPath: '/'
+    publicPath: '/',
+    proxy: {
+      '/trajectory/': 'http://localhost:8000',
+    },
   },
-  
   resolve: {
     extensions: ['.js', '.jsx'],
   },

@@ -35,6 +35,8 @@
     }
   },
   "dependencies": {
+    "antd": "^3.5.2",
+    "axios": "^0.18.0",
     "cross-env": "5.1.5",
     "deck.gl": "^5.2.5",
     "dotenv": "^5.0.1",
