@@ -22,7 +22,7 @@ def get_trajectory_by_id_sql(trajectory_id):
             {union_string}
         '''
 
-    for i in range(1, 119):
+    for i in range(1, 120):
         subquery += f'''
             SELECT TID,
             FGID,
@@ -32,7 +32,7 @@ def get_trajectory_by_id_sql(trajectory_id):
             FROM Taxi.{DB_TABLE}
             {filter_string}
         '''
-        subquery += union_string if i < 118 else ''
+        subquery += union_string if i < 119 else ''
 
     sql = f'''
         SELECT TID,
