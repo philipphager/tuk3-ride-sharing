@@ -5,6 +5,7 @@ import socket
 import pyhdb
 
 from app.database.const import DB_SCHEMA
+from app.error.DatabaseNotConnected import DatabaseConnectionError
 
 
 class HanaConnection(object):
@@ -27,7 +28,7 @@ class HanaConnection(object):
             self.cursor.execute('SET SCHEMA {}'.format(DB_SCHEMA))
         except socket.gaierror as e:
             logging.error('Database instance is not available!')
-            raise e
+            raise DatabaseConnectionError(message='Database instance is not available!')
 
     def __enter__(self):
         return self.cursor
