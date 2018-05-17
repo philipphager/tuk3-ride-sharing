@@ -11,6 +11,7 @@ flask = "*"
 flask-cors = "*"
 pyhana = {git = "https://github.com/hpi-epic/pyhana.git"}
 pyhdb = {git = "https://github.com/hpi-epic/pyhana.git"}
+geojson = "*"
 
 
 [dev-packages]

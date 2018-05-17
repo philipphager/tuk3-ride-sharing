@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d4317e3791e44cb893df35b6eecc03921fb915056a9a5dca6d07d5c827c5a669"
+            "sha256": "7447a319bc865e75eace4acab2688ef72fe44c71a92c063a11d39d0b15f11230"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -49,6 +49,13 @@
                 "sha256:bec996f0603a0693c0ea63c8126e5f8e966bb679cf82e6104b254e9c7f3a7d08"
             ],
             "version": "==3.0.4"
+        },
+        "geojson": {
+            "hashes": [
+                "sha256:8831556d1ac18805c4955aa881e022e6ddcef44020b315200680eec6dd209e40",
+                "sha256:c8873d12421665f6731b8e4c3b2484a4516c0d9b286c26cb7cffa781d062301a"
+            ],
+            "version": "==2.3.0"
         },
         "itsdangerous": {
             "hashes": [
