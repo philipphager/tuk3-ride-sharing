@@ -1,5 +1,5 @@
 import React from 'react';
-import ResizableMap from './Map';
+import ResizableMap from '../container/Map';
 
 const App = () => {
   return (
