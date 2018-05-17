@@ -3,7 +3,7 @@ from app.database.const import DB_TABLE
 
 def get_all_trajectory_ids_sql():
     return '''
-      SELECT DISTINCT TID 
+      SELECT DISTINCT TID
       FROM SHENZHEN_SHARK_DB_120
     '''
 
