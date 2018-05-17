@@ -1,6 +1,7 @@
-from flask import Flask
-from flask_cors import CORS, cross_origin
 import logging
+
+from flask import Flask
+from flask_cors import CORS
 
 from app.trajectory.controller import trajectory_controller
 
