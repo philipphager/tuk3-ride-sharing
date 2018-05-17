@@ -1,4 +1,5 @@
 from app.database.hana_connector import HanaConnection
+from app.geojson.FrameConverter import frame_to_geojson
 from app.trajectory.sql import get_trajectory_by_id_sql, get_all_trajectory_ids_sql
 
 
@@ -11,7 +12,7 @@ def get_all_trajectory_ids():
 def get_trajectory_by_id(trajectory_id):
     with HanaConnection() as connection:
         connection.execute(get_trajectory_by_id_sql(trajectory_id))
-        return connection.fetchall()
+        return frame_to_geojson(connection.fetchall())
 
 
 def _parse_to_list(cursor):
