@@ -10,3 +10,14 @@ export const getTrajectories = () => dispatch => {
       })
     });
 }
+
+export const getTrajectory = (trajectoryId) => dispatch => {
+  axios.get('/trajectory/' + trajectoryId)
+    .then(function(response){
+      dispatch({
+        type: 'FETCH_TRAJECTORY',
+        newTrajectoryID: trajectoryId,
+        trajectory: response.data
+      })
+    });
+}

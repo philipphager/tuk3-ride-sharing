@@ -12,7 +12,8 @@ const DeckGlLayer = ({ data, viewport }) => {
     extruded: true,
     lineWidthScale: 20,
     lineWidthMinPixels: 2,
-    /*     getFillColor: d => [160, 160, 180, 200],
+    /*
+    getFillColor: data => [160, 160, 180, 200],
     getLineColor: d => colorToRGBArray(d.properties.color),
     getRadius: d => 100,
     getLineWidth: d => 1,

@@ -10,6 +10,7 @@ import * as actions from '../actions/trajectoryActions';
 class App extends Component {
   static propTypes = {
     getTrajectories: PropTypes.func.isRequired,
+    getTrajectory: PropTypes.func.isRequired,
     trajectories: PropTypes.arrayOf(PropTypes.number),
   }
   componentDidMount = () => {
@@ -25,7 +26,7 @@ class App extends Component {
           </div>
         </Row>
         <Row>
-          { this.props.trajectories ? <TrajectorySelect options={this.props.trajectories.slice(0, 100)} /> : 'Nothing'}
+          { this.props.trajectories ? <TrajectorySelect options={this.props.trajectories.slice(0, 100)} onChange={this.props.getTrajectory} /> : 'Nothing'}
         </Row>
       </Fragment>
     );

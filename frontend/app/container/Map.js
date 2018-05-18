@@ -6,7 +6,6 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { connect } from 'react-redux';
 import * as actions from '../actions/mapActions';
 import DeckGlLayer from '../components/DeckGLLayer';
-import data from './Trajectory_GEOJson_Fixed_Coordinates_Broken_Timestamps';
 
 const ResizableMap = Dimensions({
   elementResize: true,
@@ -21,6 +20,7 @@ const ResizableMap = Dimensions({
       longitude: PropTypes.number,
       zoom: PropTypes.number,
     }).isRequired,
+    data: PropTypes.func.isRequired,
     changeViewport: PropTypes.func.isRequired,
     changeContainerSize: PropTypes.func.isRequired,
   };
@@ -39,15 +39,17 @@ const ResizableMap = Dimensions({
         {...this.props.viewport}
         onViewportChange={viewport => this.handleViewportChange(viewport)}
       >
-        <DeckGlLayer data={data} viewport={this.props.viewport} />
+        {this.props.data ?
+          <DeckGlLayer data={this.props.data} viewport={this.props.viewport} /> : null}
       </ReactMapGL>
     );
   }
 });
 
-function mapStateToProps({ map }) {
+function mapStateToProps({ map, trajectories }) {
   return {
     viewport: map.viewport,
+    data: trajectories.trajectoryData,
   };
 }
 

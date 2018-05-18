@@ -1,5 +1,7 @@
 const defaultTrajectoriesState = {
   trejectories: [],
+  currentTrajectoryId: null,
+  trajectoryData: null,
 };
 
 export default function (state = defaultTrajectoriesState, action) {
@@ -7,6 +9,12 @@ export default function (state = defaultTrajectoriesState, action) {
     case 'FETCH_TRAJECTORIES':
       return {
         trajectories: action.trajectories,
+      };
+    case 'FETCH_TRAJECTORY':
+      return {
+        ...state,
+        currentTrajectoryId: action.newTrajectoryID,
+        trajectoryData: action.trajectory,
       };
     default:
       return state;
