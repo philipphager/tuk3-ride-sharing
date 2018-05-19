@@ -11,8 +11,9 @@ class App extends Component {
   static propTypes = {
     getTrajectories: PropTypes.func.isRequired,
     getTrajectory: PropTypes.func.isRequired,
-    trajectories: PropTypes.arrayOf(PropTypes.number),
+    trejectoryIds: PropTypes.arrayOf(PropTypes.number),
   }
+
   componentDidMount = () => {
     this.props.getTrajectories();
   }
@@ -28,9 +29,9 @@ class App extends Component {
         <Row>
           <Col span={6}>
             Trajectory Id:
-            { this.props.trajectories ?
+            { this.props.trejectoryIds ?
               <TrajectorySelect
-                options={this.props.trajectories.slice(0, 100)}
+                options={this.props.trejectoryIds.slice(0, 100)}
                 onChange={this.props.getTrajectory}
               />
               : <Spin />}
@@ -43,12 +44,12 @@ class App extends Component {
 
 function mapStateToProps({ trajectories }) {
   return {
-    trajectories: trajectories.trajectories,
+    trejectoryIds: trajectories.trejectoryIds,
   };
 }
 
 App.defaultProps = {
-  trajectories: [],
+  trejectoryIds: [],
 };
 
 export default connect(mapStateToProps, actions)(App);
