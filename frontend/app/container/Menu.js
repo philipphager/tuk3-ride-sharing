@@ -70,6 +70,11 @@ class Menu extends Component {
   }
 
   render() {
+    const marks = {
+      0: '0',
+      1440: '12',
+      2880: '24',
+    };
     return (
       <div className="menu">
         <Row>
@@ -121,6 +126,7 @@ class Menu extends Component {
               <Slider
                 min={0}
                 value={this.props.maxFrame}
+                marks={marks}
                 max={2880}
                 onChange={this.handleTimeChange}
                 tipFormatter={this.handleFormat}
