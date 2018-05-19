@@ -12,6 +12,9 @@ export const getTrajectories = () => dispatch => {
 }
 
 export const getTrajectory = (trajectoryId) => dispatch => {
+  dispatch({
+    type: 'START_FETCHING_TRAJECTORY',
+  })
   axios.get('/trajectory/' + trajectoryId)
     .then(function(response){
       dispatch({

@@ -11,8 +11,8 @@ const TrajectorySelect = ({ options, onChange }) => {
   return (
     <Select
       showSearch
-      style={{ width: 200 }}
-      placeholder="Select a trajectory id"
+      style={{ width: 100 }}
+      placeholder="TrajectoryId"
       onChange={onChange}
     >
       {compOptions}

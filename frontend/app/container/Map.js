@@ -4,6 +4,7 @@ import Dimensions from 'react-dimensions';
 import ReactMapGL from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { connect } from 'react-redux';
+import { Spin } from 'antd';
 import * as actions from '../actions/mapActions';
 import DeckGlLayer from '../components/DeckGLLayer';
 
@@ -23,6 +24,7 @@ const ResizableMap = Dimensions({
     data: PropTypes.func.isRequired,
     changeViewport: PropTypes.func.isRequired,
     changeContainerSize: PropTypes.func.isRequired,
+    isFetching: PropTypes.bool.isRequired,
   };
 
   componentWillMount() {
@@ -35,13 +37,15 @@ const ResizableMap = Dimensions({
 
   render() {
     return (
-      <ReactMapGL
-        {...this.props.viewport}
-        onViewportChange={viewport => this.handleViewportChange(viewport)}
-      >
-        {this.props.data ?
-          <DeckGlLayer data={this.props.data} viewport={this.props.viewport} /> : null}
-      </ReactMapGL>
+      <Spin tip="Loading Trajectory..." spinning={this.props.isFetching}>
+        <ReactMapGL
+          {...this.props.viewport}
+          onViewportChange={viewport => this.handleViewportChange(viewport)}
+        >
+          {this.props.data ?
+            <DeckGlLayer data={this.props.data} viewport={this.props.viewport} /> : null}
+        </ReactMapGL>
+      </Spin>
     );
   }
 });
@@ -50,6 +54,7 @@ function mapStateToProps({ map, trajectories }) {
   return {
     viewport: map.viewport,
     data: trajectories.trajectoryData,
+    isFetching: trajectories.isFetching,
   };
 }
 

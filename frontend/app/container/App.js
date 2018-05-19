@@ -1,5 +1,5 @@
 import React, { Component, Fragment } from 'react';
-import { Row } from 'antd';
+import { Row, Col, Spin } from 'antd';
 import PropTypes from 'prop-types';
 import 'antd/dist/antd.css';
 import { connect } from 'react-redux';
@@ -26,7 +26,15 @@ class App extends Component {
           </div>
         </Row>
         <Row>
-          { this.props.trajectories ? <TrajectorySelect options={this.props.trajectories.slice(0, 100)} onChange={this.props.getTrajectory} /> : 'Nothing'}
+          <Col span={6}>
+            Trajectory Id:
+            { this.props.trajectories ?
+              <TrajectorySelect
+                options={this.props.trajectories.slice(0, 100)}
+                onChange={this.props.getTrajectory}
+              />
+              : <Spin />}
+          </Col>
         </Row>
       </Fragment>
     );
