@@ -24,6 +24,7 @@ class Menu extends Component {
     super(props);
     this.state = {
       isPlaying: false,
+      stepSize: 1,
     };
   }
 
@@ -38,7 +39,7 @@ class Menu extends Component {
           this.playingTick();
         }
       },
-      0,
+      10,
     );
   }
 
@@ -51,7 +52,11 @@ class Menu extends Component {
   }
 
   playingTick = () => {
-    this.props.changeMaxTrajectoryFrame(this.props.maxFrame + 100);
+    this.props.changeMaxTrajectoryFrame(this.props.maxFrame + this.state.stepSize);
+  }
+
+  handleStepSizeChange = (value) => {
+    this.setState({ stepSize: value });
   }
 
   handleFormat = (value) => {
@@ -78,14 +83,22 @@ class Menu extends Component {
             <Spin />
           )}
         </Col>
-        <Col span={2}>
-          <Button
-            type="primary"
-            icon={this.state.isPlaying ? 'pause' : 'caret-right'}
-            onClick={this.handlePlay}
-          />
+        <Col span={6}>
+          <Row>
+            <Button
+              type="primary"
+              icon={this.state.isPlaying ? 'pause' : 'caret-right'}
+              onClick={this.handlePlay}
+            />
+            <Slider
+              min={1}
+              max={20}
+              value={this.state.stepSize}
+              onChange={this.handleStepSizeChange}
+            />
+          </Row>
         </Col>
-        <Col span={14}>
+        <Col span={12}>
           <Slider
             min={0}
             value={this.props.maxFrame}
