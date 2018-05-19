@@ -23,6 +23,12 @@ class App extends Component {
     this.props.changeMaxTrajectoryFrame(newValue);
   }
 
+  handleFormat = (value) => {
+    const hour = (`0${Math.floor(value / 120)}`).slice(-2);
+    const minute = (`0${Math.floor((value / 2) - (60 * hour))}`).slice(-2);
+    return `${hour}:${minute}`;
+  }
+
   render() {
     return (
       <Fragment>
@@ -42,7 +48,13 @@ class App extends Component {
               : <Spin />}
           </Col>
           <Col span={16}>
-            <Slider min={0} max={2880} onChange={this.handleTimeChange} />
+            <Slider
+              min={0}
+              defaultValue={2880}
+              max={2880}
+              onChange={this.handleTimeChange}
+              tipFormatter={this.handleFormat}
+            />
           </Col>
         </Row>
       </Fragment>
