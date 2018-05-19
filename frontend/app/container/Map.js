@@ -21,12 +21,19 @@ const ResizableMap = Dimensions({
       longitude: PropTypes.number,
       zoom: PropTypes.number,
     }).isRequired,
-    data: PropTypes.func.isRequired,
+    // eslint-disable-next-line
+    data: PropTypes.object,
     changeViewport: PropTypes.func.isRequired,
     changeContainerSize: PropTypes.func.isRequired,
-    isFetching: PropTypes.bool.isRequired,
-    maxFrame: PropTypes.number.isRequired,
+    isFetching: PropTypes.bool,
+    maxFrame: PropTypes.number,
   };
+
+  static defaultProps = {
+    data: null,
+    maxFrame: 2880,
+    isFetching: false,
+  }
 
   componentWillMount() {
     this.props.changeContainerSize(this.props.containerWidth, this.props.containerHeight);
@@ -37,14 +44,18 @@ const ResizableMap = Dimensions({
   }
 
   render() {
-    const trajectoryData = {
-      type: this.props.data.type,
-      properties: this.props.data.properties,
-      geometry: {
-        coordinates: this.props.data.geometry.coordinates.slice(0, this.props.maxFrame),
-        type: this.props.data.geometry.type,
-      },
-    };
+    let trajectoryData = null;
+    if (this.props.data) {
+      trajectoryData = {
+        type: this.props.data.type,
+        properties: this.props.data.properties,
+        geometry: {
+          coordinates: this.props.data.geometry.coordinates.slice(0, this.props.maxFrame),
+          type: this.props.data.geometry.type,
+        },
+      };
+    }
+
     return (
       <Spin tip="Loading Trajectory..." spinning={this.props.isFetching}>
         <ReactMapGL

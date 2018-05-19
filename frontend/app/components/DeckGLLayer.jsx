@@ -7,7 +7,7 @@ const DeckGlLayer = ({ data, viewport }) => {
     id: 'geojson-layer',
     data,
     pickable: true,
-    stroked: false,
+    stroked: true,
     filled: true,
     extruded: true,
     lineWidthScale: 20,
