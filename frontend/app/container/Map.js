@@ -48,7 +48,10 @@ const ResizableMap = Dimensions({
     if (this.props.data) {
       trajectoryData = {
         type: this.props.data.type,
-        properties: this.props.data.properties,
+        properties: {
+          color: [255, 0, 0, 255],
+          ...this.props.data.properties,
+        },
         geometry: {
           coordinates: this.props.data.geometry.coordinates.slice(0, this.props.maxFrame),
           type: this.props.data.geometry.type,

@@ -71,43 +71,64 @@ class Menu extends Component {
 
   render() {
     return (
-      <Row>
-        <Col span={6}>
-          Trajectory Id:
-          {this.props.trajectoryIds ? (
-            <TrajectorySelect
-              options={this.props.trajectoryIds.slice(0, 100)}
-              onChange={this.props.getTrajectory}
-            />
-          ) : (
-            <Spin />
-          )}
-        </Col>
-        <Col span={6}>
-          <Row>
-            <Button
-              type="primary"
-              icon={this.state.isPlaying ? 'pause' : 'caret-right'}
-              onClick={this.handlePlay}
-            />
-            <Slider
-              min={1}
-              max={20}
-              value={this.state.stepSize}
-              onChange={this.handleStepSizeChange}
-            />
-          </Row>
-        </Col>
-        <Col span={12}>
-          <Slider
-            min={0}
-            value={this.props.maxFrame}
-            max={2880}
-            onChange={this.handleTimeChange}
-            tipFormatter={this.handleFormat}
-          />
-        </Col>
-      </Row>
+      <div className="menu">
+        <Row>
+          <Col span={3}>
+            <Row>
+              <span className="menuInfo">Trajectory Id:</span>
+            </Row>
+            <Row>
+              {this.props.trajectoryIds ? (
+                <TrajectorySelect
+                  options={this.props.trajectoryIds.slice(0, 100)}
+                  onChange={this.props.getTrajectory}
+                />
+              ) : (
+                <Spin />
+              )}
+            </Row>
+          </Col>
+          <Col span={4}>
+            <Row>
+              <Col span={4} />
+              <Col span={20}>
+                <span className="menuInfo">Playing Speed</span>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={4}>
+                <Button
+                  type="primary"
+                  icon={this.state.isPlaying ? 'pause' : 'caret-right'}
+                  onClick={this.handlePlay}
+                />
+              </Col>
+              <Col span={20}>
+                <Slider
+                  min={1}
+                  max={20}
+                  value={this.state.stepSize}
+                  onChange={this.handleStepSizeChange}
+                />
+              </Col>
+            </Row>
+          </Col>
+          <Col span={12}>
+            <Row>
+              <span className="menuInfo">Control the time of day</span>
+            </Row>
+            <Row>
+              <Slider
+                min={0}
+                value={this.props.maxFrame}
+                max={2880}
+                onChange={this.handleTimeChange}
+                tipFormatter={this.handleFormat}
+              />
+            </Row>
+          </Col>
+        </Row>
+      </div>
     );
   }
 }

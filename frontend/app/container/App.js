@@ -3,17 +3,18 @@ import 'antd/dist/antd.css';
 import { Row } from 'antd';
 import ResizableMap from './Map';
 import Menu from './Menu';
+import './app.css';
 
 const App = () => {
   return (
     <Fragment>
       <Row>
-        <div style={{ width: '100vw', height: '80vh' }}>
-          <ResizableMap />
-        </div>
+        <Menu />
       </Row>
       <Row>
-        <Menu />
+        <div style={{ width: '100vw', height: '90vh' }}>
+          <ResizableMap />
+        </div>
       </Row>
     </Fragment>
   );
