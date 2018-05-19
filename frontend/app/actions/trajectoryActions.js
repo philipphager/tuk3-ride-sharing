@@ -24,3 +24,10 @@ export const getTrajectory = (trajectoryId) => dispatch => {
       })
     });
 }
+
+export const changeMaxTrajectoryFrame = (maxFrame) => dispatch => {
+  dispatch({
+    type: 'CHANGE_MAX_FRAME',
+    maxFrame: maxFrame,
+  });
+}

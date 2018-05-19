@@ -25,6 +25,7 @@ const ResizableMap = Dimensions({
     changeViewport: PropTypes.func.isRequired,
     changeContainerSize: PropTypes.func.isRequired,
     isFetching: PropTypes.bool.isRequired,
+    maxFrame: PropTypes.number.isRequired,
   };
 
   componentWillMount() {
@@ -36,6 +37,14 @@ const ResizableMap = Dimensions({
   }
 
   render() {
+    const trajectoryData = {
+      type: this.props.data.type,
+      properties: this.props.data.properties,
+      geometry: {
+        coordinates: this.props.data.geometry.coordinates.slice(0, this.props.maxFrame),
+        type: this.props.data.geometry.type,
+      },
+    };
     return (
       <Spin tip="Loading Trajectory..." spinning={this.props.isFetching}>
         <ReactMapGL
@@ -43,7 +52,11 @@ const ResizableMap = Dimensions({
           onViewportChange={viewport => this.handleViewportChange(viewport)}
         >
           {this.props.data ?
-            <DeckGlLayer data={this.props.data} viewport={this.props.viewport} /> : null}
+            <DeckGlLayer
+              data={trajectoryData}
+              viewport={this.props.viewport}
+            />
+            : null}
         </ReactMapGL>
       </Spin>
     );
@@ -55,6 +68,7 @@ function mapStateToProps({ map, trajectories }) {
     viewport: map.viewport,
     data: trajectories.trajectoryData,
     isFetching: trajectories.isFetching,
+    maxFrame: trajectories.maxFrame,
   };
 }
 

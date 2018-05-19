@@ -3,6 +3,7 @@ const defaultTrajectoriesState = {
   currentTrajectoryId: null,
   trajectoryData: null,
   isFetching: false,
+  maxFrame: 2880,
 };
 
 export default function (state = defaultTrajectoriesState, action) {
@@ -22,6 +23,11 @@ export default function (state = defaultTrajectoriesState, action) {
       return {
         ...state,
         isFetching: true,
+      };
+    case 'CHANGE_MAX_FRAME':
+      return {
+        ...state,
+        maxFrame: action.maxFrame,
       };
     default:
       return state;
