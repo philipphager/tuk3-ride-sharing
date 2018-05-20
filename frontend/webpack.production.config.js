@@ -1,8 +1,13 @@
 const { resolve } = require('path');
 const webpack = require('webpack');
+const path = require('path');
+const fs = require('fs');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const lessToJs = require('less-vars-to-js');
+
+const themeVariables = lessToJs(fs.readFileSync(path.join(__dirname, './ant-theme.less'), 'utf8'));
 
 const config = {
   devtool: 'cheap-module-source-map',
@@ -47,9 +52,34 @@ const config = {
   module: {
     loaders: [
       {
+        test: /\.less$/,
+        use: [
+          { loader: "style-loader" },
+          { loader: "css-loader" },
+          {
+            loader: "less-loader",
+            options: {
+              modifyVars: themeVariables,
+              javascriptEnabled: true,
+            },
+          },
+        ],
+      },
+      {
+        test: /\.css$/,
+        use: [ 'style-loader', 'css-loader' ]
+      },
+      {
         test: /\.jsx?$/,
         exclude: /node_modules/,
-        loader: 'babel-loader',
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              plugins: [["import", { "libraryName": "antd", "style": true }]],
+            },
+          },
+        ],
       },
       {
         test: /\.scss$/,
@@ -57,8 +87,15 @@ const config = {
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: [
-            'css-loader',
-            { loader: 'sass-loader', query: { sourceMap: false } },
+            {
+              loader: 'css-loader',
+            },
+            {
+              loader: 'sass-loader',
+              query: { 
+                sourceMap: false 
+              },
+            },
           ],
           publicPath: '../'
         }),

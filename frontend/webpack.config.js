@@ -1,10 +1,15 @@
 const { resolve } = require('path');
+const path = require('path');
+const fs = require('fs');
 
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const OpenBrowserPlugin = require('open-browser-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
+const lessToJs = require('less-vars-to-js');
+
+const themeVariables = lessToJs(fs.readFileSync(path.join(__dirname, './ant-theme.less'), 'utf8'));
 
 const config = {
   devtool: 'cheap-module-eval-source-map',
@@ -29,15 +34,31 @@ const config = {
     hot: true,
     contentBase: resolve(__dirname, 'build'),
     historyApiFallback: true,
-    publicPath: '/'
+    publicPath: '/',
+    proxy: {
+      '/trajectory/': 'http://localhost:8000',
+    },
   },
-  
   resolve: {
     extensions: ['.js', '.jsx'],
   },
 
   module: {
     rules: [
+      {
+        test: /\.less$/,
+        use: [
+          { loader: "style-loader" },
+          { loader: "css-loader" },
+          {
+            loader: "less-loader",
+            options: {
+              modifyVars: themeVariables,
+              javascriptEnabled: true,
+            },
+          },
+        ],
+      },
       {
         test: /\.css$/,
         use: [ 'style-loader', 'css-loader' ]
@@ -49,11 +70,14 @@ const config = {
         loader: "eslint-loader"
       },
       {
-        test: /\.jsx?$/,
-        loaders: [
-          'babel-loader',
-        ],
+        loader: 'babel-loader',
         exclude: /node_modules/,
+        test: /\.jsx?$/,
+        options: {
+          plugins: [
+            ['import', { libraryName: "antd", style: true }]
+          ]
+        }
       },
       {
         test: /\.scss$/,

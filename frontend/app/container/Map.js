@@ -4,7 +4,9 @@ import Dimensions from 'react-dimensions';
 import ReactMapGL from 'react-map-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { connect } from 'react-redux';
-import * as actions from '../actions';
+import { Spin } from 'antd';
+import * as actions from '../actions/mapActions';
+import DeckGlLayer from '../components/DeckGLLayer';
 
 const ResizableMap = Dimensions({
   elementResize: true,
@@ -19,9 +21,19 @@ const ResizableMap = Dimensions({
       longitude: PropTypes.number,
       zoom: PropTypes.number,
     }).isRequired,
+    // eslint-disable-next-line
+    data: PropTypes.array,
     changeViewport: PropTypes.func.isRequired,
     changeContainerSize: PropTypes.func.isRequired,
+    isFetching: PropTypes.bool,
+    maxFrame: PropTypes.number,
   };
+
+  static defaultProps = {
+    data: null,
+    maxFrame: 2880,
+    isFetching: false,
+  }
 
   componentWillMount() {
     this.props.changeContainerSize(this.props.containerWidth, this.props.containerHeight);
@@ -32,18 +44,53 @@ const ResizableMap = Dimensions({
   }
 
   render() {
+    const colors = [
+      [255, 139, 139, 255],
+      [97, 191, 173, 255],
+      [15, 207, 97, 255],
+      [55, 23, 34, 255],
+      [27, 29, 28, 255],
+      [119, 238, 223, 255],
+    ];
+    const trajectoriesData = this.props.data.map((trajectoryData, index) => {
+      return {
+        type: trajectoryData.geoJsonData.type,
+        properties: {
+          color: colors[index],
+          ...trajectoryData.geoJsonData.properties,
+        },
+        geometry: {
+          // eslint-disable-next-line
+          coordinates: trajectoryData.geoJsonData.geometry.coordinates.slice(0, this.props.maxFrame),
+          type: trajectoryData.geoJsonData.geometry.type,
+        },
+      };
+    });
+
     return (
-      <ReactMapGL
-        {...this.props.viewport}
-        onViewportChange={viewport => this.handleViewportChange(viewport)}
-      />
+      <Spin tip="Loading Trajectory..." spinning={this.props.isFetching}>
+        <ReactMapGL
+          {...this.props.viewport}
+          onViewportChange={viewport => this.handleViewportChange(viewport)}
+        >
+          {this.props.data.length > 0 ?
+            <DeckGlLayer
+              data={trajectoriesData}
+              viewport={this.props.viewport}
+            />
+            : null}
+        </ReactMapGL>
+      </Spin>
     );
   }
 });
 
-function mapStateToProps({ map }) {
+function mapStateToProps({ map, trajectories }) {
   return {
     viewport: map.viewport,
+    data: trajectories.trajectoriesData,
+    isFetching: trajectories.isFetching,
+    maxFrame: trajectories.maxFrame,
   };
 }
 
