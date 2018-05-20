@@ -11,6 +11,7 @@ class Menu extends Component {
   static propTypes = {
     getTrajectories: PropTypes.func.isRequired,
     getTrajectory: PropTypes.func.isRequired,
+    removeTrajectory: PropTypes.func.isRequired,
     changeMaxTrajectoryFrame: PropTypes.func.isRequired,
     trajectoryIds: PropTypes.arrayOf(PropTypes.number),
     maxFrame: PropTypes.number,
@@ -85,7 +86,8 @@ class Menu extends Component {
               {this.props.trajectoryIds ? (
                 <TrajectorySelect
                   options={this.props.trajectoryIds.slice(0, 100)}
-                  onChange={this.props.getTrajectory}
+                  onSelect={this.props.getTrajectory}
+                  onDeselect={this.props.removeTrajectory}
                 />
               ) : (
                 <Spin />

@@ -22,7 +22,7 @@ const ResizableMap = Dimensions({
       zoom: PropTypes.number,
     }).isRequired,
     // eslint-disable-next-line
-    data: PropTypes.object,
+    data: PropTypes.array,
     changeViewport: PropTypes.func.isRequired,
     changeContainerSize: PropTypes.func.isRequired,
     isFetching: PropTypes.bool,
@@ -44,30 +44,29 @@ const ResizableMap = Dimensions({
   }
 
   render() {
-    let trajectoryData = null;
-    if (this.props.data) {
-      trajectoryData = {
-        type: this.props.data.type,
+    const trajectoriesData = this.props.data.map(trajectoryData => (
+      {
+        type: trajectoryData.geoJsonData.type,
         properties: {
           color: [255, 0, 0, 255],
-          ...this.props.data.properties,
+          ...trajectoryData.geoJsonData.properties,
         },
         geometry: {
-          coordinates: this.props.data.geometry.coordinates.slice(0, this.props.maxFrame),
-          type: this.props.data.geometry.type,
+          // eslint-disable-next-line
+          coordinates: trajectoryData.geoJsonData.geometry.coordinates.slice(0, this.props.maxFrame),
+          type: trajectoryData.geoJsonData.geometry.type,
         },
-      };
-    }
-
+      }
+    ));
     return (
       <Spin tip="Loading Trajectory..." spinning={this.props.isFetching}>
         <ReactMapGL
           {...this.props.viewport}
           onViewportChange={viewport => this.handleViewportChange(viewport)}
         >
-          {this.props.data ?
+          {this.props.data.length > 0 ?
             <DeckGlLayer
-              data={trajectoryData}
+              data={trajectoriesData}
               viewport={this.props.viewport}
             />
             : null}
@@ -80,7 +79,7 @@ const ResizableMap = Dimensions({
 function mapStateToProps({ map, trajectories }) {
   return {
     viewport: map.viewport,
-    data: trajectories.trajectoryData,
+    data: trajectories.trajectoriesData,
     isFetching: trajectories.isFetching,
     maxFrame: trajectories.maxFrame,
   };

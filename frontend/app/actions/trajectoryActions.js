@@ -19,10 +19,20 @@ export const getTrajectory = (trajectoryId) => dispatch => {
     .then(function(response){
       dispatch({
         type: 'FETCH_TRAJECTORY',
-        newTrajectoryID: trajectoryId,
-        trajectory: response.data
+        selectedTrajectory: trajectoryId,
+        trajectoryData: {
+          trajectoryId: trajectoryId,
+          geoJsonData: response.data,
+        },
       })
     });
+}
+
+export const removeTrajectory = (trajectoryId) => dispatch => {
+  dispatch({
+    type: 'REMOVE_TRAJECTORY',
+    trajectoryId: trajectoryId,
+  });
 }
 
 export const changeMaxTrajectoryFrame = (maxFrame) => dispatch => {

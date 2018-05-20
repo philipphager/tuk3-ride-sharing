@@ -3,25 +3,30 @@ import PropTypes from 'prop-types';
 import DeckGL, { GeoJsonLayer } from 'deck.gl';
 
 const DeckGlLayer = ({ data, viewport }) => {
-  const layer = new GeoJsonLayer({
-    id: 'geojson-layer',
-    data,
-    pickable: true,
-    stroked: true,
-    filled: true,
-    extruded: true,
-    lineWidthScale: 20,
-    lineWidthMinPixels: 2,
-    /*
-    getFillColor: data => [160, 160, 180, 200],
-    getLineColor: d => colorToRGBArray(d.properties.color),
-    getRadius: d => 100,
-    getLineWidth: d => 1,
-    getElevation: d => 30,
-    onHover: ({object}) => setTooltip(object.properties.name || object.properties.station) */
+  const layers = data.map((trajectoryData, index) => {
+    return new GeoJsonLayer({
+      id: index,
+      data: trajectoryData,
+      pickable: true,
+      stroked: false,
+      filled: true,
+      extruded: true,
+      lineWidthScale: 10,
+      lineWidthMinPixels: 2,
+      // getLineColor: trajectoryData => trajectoryData.geoJsonData.properties.color,
+      // onHover: ({ object }) => setTooltip(object.properties.timestamp),
+      // color: [255, 255, 0, 0],
+      /*
+      getLineColor: d => colorToRGBArray(d.properties.color),
+      getRadius: d => 100,
+      getLineWidth: d => 1,
+      getElevation: d => 30,
+      onHover: ({object}) => setTooltip(object.properties.name || object.properties.station) */
+    });
   });
+
   return (
-    <DeckGL {...viewport} layers={[layer]} />
+    <DeckGL {...viewport} layers={[layers]} />
   );
 };
 

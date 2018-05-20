@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Select } from 'antd';
 
-const TrajectorySelect = ({ options, onChange }) => {
+const TrajectorySelect = ({ options, onSelect, onDeselect }) => {
   const compOptions = options.map(value => (
     <Select.Option value={value} key={value}>
       {value}
@@ -10,10 +10,12 @@ const TrajectorySelect = ({ options, onChange }) => {
   ));
   return (
     <Select
+      mode="multiple"
       showSearch
-      style={{ width: 100 }}
-      placeholder="TrajectoryId"
-      onChange={onChange}
+      style={{ width: '100%' }}
+      placeholder="Please select one TID"
+      onSelect={onSelect}
+      onDeselect={onDeselect}
     >
       {compOptions}
     </Select>
@@ -22,7 +24,8 @@ const TrajectorySelect = ({ options, onChange }) => {
 
 TrajectorySelect.propTypes = {
   options: PropTypes.arrayOf(PropTypes.number).isRequired,
-  onChange: PropTypes.func.isRequired,
+  onSelect: PropTypes.func.isRequired,
+  onDeselect: PropTypes.func.isRequired,
 };
 
 export default TrajectorySelect;
