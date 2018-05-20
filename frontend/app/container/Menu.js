@@ -5,6 +5,7 @@ import { Row, Col, Slider, Spin, Button } from 'antd';
 
 import * as actions from '../actions/trajectoryActions';
 import TrajectorySelect from '../components/TrajectorySelect';
+import getTimeStringFromFID from '../utils/trajectoryFrame';
 
 class Menu extends Component {
   static propTypes = {
@@ -60,9 +61,7 @@ class Menu extends Component {
   }
 
   handleFormat = (value) => {
-    const hour = (`0${Math.floor(value / 120)}`).slice(-2);
-    const minute = (`0${Math.floor((value / 2) - (60 * hour))}`).slice(-2);
-    return `${hour}:${minute}`;
+    return getTimeStringFromFID(value);
   }
 
   handlePlay = () => {
