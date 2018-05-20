@@ -13,7 +13,7 @@ const DeckGlLayer = ({ data, viewport }) => {
       extruded: true,
       lineWidthScale: 10,
       lineWidthMinPixels: 2,
-      // getLineColor: trajectoryData => trajectoryData.geoJsonData.properties.color,
+      getLineColor: d => d.properties.color,
       // onHover: ({ object }) => setTooltip(object.properties.timestamp),
       // color: [255, 255, 0, 0],
       /*

@@ -44,11 +44,19 @@ const ResizableMap = Dimensions({
   }
 
   render() {
-    const trajectoriesData = this.props.data.map(trajectoryData => (
-      {
+    const colors = [
+      [255, 139, 139, 255],
+      [97, 191, 173, 255],
+      [15, 207, 97, 255],
+      [55, 23, 34, 255],
+      [27, 29, 28, 255],
+      [119, 238, 223, 255],
+    ];
+    const trajectoriesData = this.props.data.map((trajectoryData, index) => {
+      return {
         type: trajectoryData.geoJsonData.type,
         properties: {
-          color: [255, 0, 0, 255],
+          color: colors[index],
           ...trajectoryData.geoJsonData.properties,
         },
         geometry: {
@@ -56,8 +64,9 @@ const ResizableMap = Dimensions({
           coordinates: trajectoryData.geoJsonData.geometry.coordinates.slice(0, this.props.maxFrame),
           type: trajectoryData.geoJsonData.geometry.type,
         },
-      }
-    ));
+      };
+    });
+
     return (
       <Spin tip="Loading Trajectory..." spinning={this.props.isFetching}>
         <ReactMapGL
