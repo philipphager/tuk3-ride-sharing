@@ -32,7 +32,6 @@ const DeckGlLayer = ({ data, viewport }) => {
 
 /* eslint-disable */
 DeckGlLayer.propTypes = {
-  // eslint-disable-next-line
   data: PropTypes.any.isRequired,
   viewport: PropTypes.any.isRequired
 };
