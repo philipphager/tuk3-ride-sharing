@@ -6,6 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const lessToJs = require('less-vars-to-js');
+const Dotenv = require('dotenv-webpack');
 
 const themeVariables = lessToJs(fs.readFileSync(path.join(__dirname, './ant-theme.less'), 'utf8'));
 
@@ -43,6 +44,7 @@ const config = {
     new webpack.DefinePlugin({ 'process.env': { NODE_ENV: JSON.stringify('production') } }),
     new ExtractTextPlugin({ filename: './styles/style.css', disable: false, allChunks: true }),
     new CopyWebpackPlugin([{ from: './vendors', to: 'vendors' }]),
+    new Dotenv(),
   ],
 
   resolve: {
@@ -67,7 +69,7 @@ const config = {
       },
       {
         test: /\.css$/,
-        use: [ 'style-loader', 'css-loader' ]
+        use: ['style-loader', 'css-loader']
       },
       {
         test: /\.jsx?$/,
@@ -92,8 +94,8 @@ const config = {
             },
             {
               loader: 'sass-loader',
-              query: { 
-                sourceMap: false 
+              query: {
+                sourceMap: false
               },
             },
           ],
