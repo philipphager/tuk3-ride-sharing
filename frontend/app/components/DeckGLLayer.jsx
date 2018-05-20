@@ -14,14 +14,6 @@ const DeckGlLayer = ({ data, viewport }) => {
       lineWidthScale: 10,
       lineWidthMinPixels: 2,
       getLineColor: d => d.properties.color,
-      // onHover: ({ object }) => setTooltip(object.properties.timestamp),
-      // color: [255, 255, 0, 0],
-      /*
-      getLineColor: d => colorToRGBArray(d.properties.color),
-      getRadius: d => 100,
-      getLineWidth: d => 1,
-      getElevation: d => 30,
-      onHover: ({object}) => setTooltip(object.properties.name || object.properties.station) */
     });
   });
 
