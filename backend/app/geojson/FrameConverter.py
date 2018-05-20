@@ -6,5 +6,5 @@ def frame_to_geojson(frames):
     return Feature(geometry=LineString(points))
 
 
-def trajectory_ids_to_list(cursor):
+def trajectory_ids_to_json(cursor):
     return {'trajectory_ids': [row[0] for row in cursor]}
