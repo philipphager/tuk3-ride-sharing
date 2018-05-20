@@ -66,6 +66,10 @@ const config = {
         ],
       },
       {
+        test: /\.css$/,
+        use: [ 'style-loader', 'css-loader' ]
+      },
+      {
         test: /\.jsx?$/,
         exclude: /node_modules/,
         use: [
@@ -83,8 +87,15 @@ const config = {
         use: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: [
-            'css-loader',
-            { loader: 'sass-loader', query: { sourceMap: false } },
+            {
+              loader: 'css-loader',
+            },
+            {
+              loader: 'sass-loader',
+              query: { 
+                sourceMap: false 
+              },
+            },
           ],
           publicPath: '../'
         }),
