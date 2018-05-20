@@ -11,7 +11,7 @@ cors = CORS(app, resources={"/": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 app.register_blueprint(trajectory_controller, url_prefix='/trajectory')
-app.register_blueprint(home_controller)
+app.register_blueprint(home_controller, url_prefix='/')
 
 logging.getLogger().setLevel(logging.DEBUG)
 logging.getLogger('pyhdb').setLevel(logging.WARNING)
