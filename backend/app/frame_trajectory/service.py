@@ -2,7 +2,7 @@ import pandas as pd
 from app.database.hana_connector import HanaConnection
 from app.geojson.frame_converter import frame_to_geojson,\
     trajectory_ids_to_json, frame_to_point
-from app.trajectory.sql import get_trajectory_by_id_sql,\
+from app.frame_trajectory.sql import get_trajectory_by_id_sql,\
     get_all_trajectory_ids_sql
 
 
