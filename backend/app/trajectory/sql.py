@@ -1,10 +1,10 @@
-from app.database.const import DB_TABLE
+from app.database.const import TRAJ_SHARK_120
 
 
 def get_all_trajectory_ids_sql():
-    return '''
+    return f'''
       SELECT DISTINCT TID
-      FROM SHENZHEN_SHARK_DB_120
+      FROM {TRAJ_SHARK_120}
     '''
 
 
@@ -17,7 +17,7 @@ def get_trajectory_by_id_sql(trajectory_id):
             0 AS FID,
             Ix AS LON,
             Iy AS LAT
-            FROM Taxi.{DB_TABLE}
+            FROM {TRAJ_SHARK_120}
             {filter_string}
             {union_string}
         '''
@@ -29,7 +29,7 @@ def get_trajectory_by_id_sql(trajectory_id):
             {i} AS FID,
             Ix + P{i}x AS LON,
             Iy + P{i}y AS LAT
-            FROM Taxi.{DB_TABLE}
+            FROM {TRAJ_SHARK_120}
             {filter_string}
         '''
         subquery += union_string if i < 119 else ''
