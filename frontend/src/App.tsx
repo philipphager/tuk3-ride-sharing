@@ -1,16 +1,15 @@
-import { Layout } from 'antd';
+import { Row } from 'antd';
 import * as React from 'react';
 import './App.css';
+import Map from './container/Map';
 import Menu from './container/Menu';
-
-const { Header, Content } = Layout;
 
 const App = () => (
   <React.Fragment>
-    <Layout>
-      <Header className="Menu"><Menu /></Header>
-      <Content>Test</Content>
-    </Layout>
+    <Menu />
+    <Row>
+      <Map />
+    </Row>
   </React.Fragment>
 )
 
