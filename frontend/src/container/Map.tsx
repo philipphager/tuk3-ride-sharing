@@ -1,7 +1,9 @@
 import * as React from 'react';
 // @ts-ignore
 import Dimensions from 'react-dimensions';
-import InteractiveMap from 'react-map-gl';
+import ReactMapGL from 'react-map-gl';
+import DeckGlLayer from '../components/DeckGLLayer';
+import data from '../constants/test';
 
 export interface Props {
     containerWidth: number;
@@ -23,12 +25,17 @@ class Map extends React.Component<Props, any> {
     }
     public render() {
         return (
-            <InteractiveMap
+            <ReactMapGL
                 {...this.state.viewport}
                 mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
                 mapStyle={process.env.REACT_APP_MAPBOX_STYLE}
                 onViewportChange={this.handleViewportChange}
-            />
+            >
+                <DeckGlLayer
+                    data={[data]}
+                    viewport={this.state.viewport}
+                />
+            </ReactMapGL>
         );
     }
 
