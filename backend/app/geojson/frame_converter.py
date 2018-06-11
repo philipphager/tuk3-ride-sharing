@@ -27,17 +27,23 @@ def frame_to_point(data):
 
 def frame_to_point_with_limit(data, max_group, max_frame):
     reshaped_data = []
+    first_frame_id = 0
+    last_frame_id = 0
+
     for frame in data:
         group_id = frame[0]
         frame_id = group_id * 30
+        first_frame_id = frame_id
         i = 1
 
         while i in range(1, len(frame), 2) and group_id <= max_group and frame_id <= max_frame:
             reshaped_data.append((frame[i], frame[i + 1]))
-            frame_id = group_id * 30 + i
+            frame_id = group_id * 30 + (i // 2)
+            if frame[i]:
+                last_frame_id = frame_id
             i += 2
 
-    return reshaped_data
+    return first_frame_id, last_frame_id, reshaped_data
 
 
 def unpack_key_value_object(trajectory):
