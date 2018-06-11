@@ -21,7 +21,6 @@ def frame_to_point(data):
 
 def unpack_key_value_object(trajectory):
     trajectory[1].read()
-    trajectory[1].read()
     samples = json.loads(str(trajectory[1]))
     array = []
     for sample in samples:
