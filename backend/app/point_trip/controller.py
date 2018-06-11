@@ -1,8 +1,7 @@
 from flask import Blueprint, jsonify, request
 
 from app.error.DatabaseNotConnected import DatabaseConnectionError
-from app.frame_trip.service import get_trip_by_id
-from app.point_trip.service import get_all_trip_ids
+from app.point_trip.service import get_all_trip_ids, get_trip_by_id
 
 point_trip_controller = Blueprint('point-trip', __name__)
 

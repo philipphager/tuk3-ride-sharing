@@ -12,7 +12,7 @@ def get_all_trip_ids_sql(offset, limit):
 
 def get_trip_by_id_sql(trip_id, max_time):
     sql = f'''
-    SELECT LON, LAT
+    SELECT TIMESTAMP, LON, LAT
     FROM {POINT_TRIPS_TABLE}
     WHERE ID = {trip_id}
     AND TIMESTAMP <= {max_time}
