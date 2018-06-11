@@ -36,7 +36,8 @@ const config = {
     historyApiFallback: true,
     publicPath: '/',
     proxy: {
-      '/trajectory/': 'http://localhost:8000',
+      '/frame-trajectory/': 'http://localhost:8000',
+      '/point-trajectory/': 'http://localhost:8000',
     },
   },
   resolve: {

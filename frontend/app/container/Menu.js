@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Row, Col, Slider, Spin, Button } from 'antd';
-
+import { Row, Col, Slider, Spin, Button, Modal, Select } from 'antd';
+import formats from '../constants';
 import * as actions from '../actions/trajectoryActions';
 import TrajectorySelect from '../components/TrajectorySelect';
 import getTimeStringFromFID from '../utils/trajectoryFrame';
+import TimeChart from './TimeChart';
 
 class Menu extends Component {
   static propTypes = {
@@ -15,6 +16,8 @@ class Menu extends Component {
     changeMaxTrajectoryFrame: PropTypes.func.isRequired,
     trajectoryIds: PropTypes.arrayOf(PropTypes.number),
     maxFrame: PropTypes.number,
+    // eslint-disable-next-line
+    times: PropTypes.any,
   }
 
   static defaultProps = {
@@ -27,11 +30,13 @@ class Menu extends Component {
     this.state = {
       isPlaying: false,
       stepSize: 1,
+      timeModalVisible: false,
+      format: formats[0].value,
     };
   }
 
   componentWillMount() {
-    this.props.getTrajectories();
+    this.props.getTrajectories(this.state.format);
   }
 
   componentDidMount() {
@@ -47,6 +52,14 @@ class Menu extends Component {
 
   componentWillUnmount() {
     clearInterval(this.timerID);
+  }
+
+  onTimeButtonClick = () => {
+    this.setState({ timeModalVisible: true });
+  }
+
+  onTimeModalCloseClick = () => {
+    this.setState({ timeModalVisible: false });
   }
 
   handleTimeChange = (newValue) => {
@@ -69,15 +82,38 @@ class Menu extends Component {
     this.setState({ isPlaying: !this.state.isPlaying });
   }
 
+  handleFormatSelect = (value) => {
+    this.setState({ format: value });
+    this.props.getTrajectories(this.state.format);
+  }
+
   render() {
     const marks = {
       0: '0',
       1440: '12',
       2880: '24',
     };
+
+    const frameOptions = formats.map(obj => (
+      <Select.Option value={obj.value}>{obj.name}</Select.Option>
+    ));
     return (
       <div className="menu">
         <Row>
+          <Col span={3}>
+            <Row>
+              <span className="menuInfo">Format</span>
+            </Row>
+            <Row>
+              <Select
+                style={{ width: '100%' }}
+                value={this.state.format}
+                onSelect={this.handleFormatSelect}
+              >
+                {frameOptions}
+              </Select>
+            </Row>
+          </Col>
           <Col span={3}>
             <Row>
               <span className="menuInfo">Trajectory Id:</span>
@@ -86,7 +122,7 @@ class Menu extends Component {
               {this.props.trajectoryIds ? (
                 <TrajectorySelect
                   options={this.props.trajectoryIds.slice(0, 100)}
-                  onSelect={this.props.getTrajectory}
+                  onSelect={value => this.props.getTrajectory(value, this.state.format)}
                   onDeselect={this.props.removeTrajectory}
                 />
               ) : (
@@ -134,16 +170,33 @@ class Menu extends Component {
               />
             </Row>
           </Col>
+          <Col>
+            <Button
+              onClick={this.onTimeButtonClick}
+            >
+            Show Times
+            </Button>
+          </Col>
         </Row>
+        <Modal
+          title="Time Overview"
+          visible={this.state.timeModalVisible}
+          onOk={this.onTimeModalCloseClick}
+          okText="Close"
+          okCancel={false}
+        >
+          <TimeChart times={this.props.times} />
+        </Modal>
       </div>
     );
   }
 }
 
-function mapStateToProps({ trajectories }) {
+function mapStateToProps({ trajectories, time }) {
   return {
     trajectoryIds: trajectories.trejectoryIds,
     maxFrame: trajectories.maxFrame,
+    times: time.times,
   };
 }
 

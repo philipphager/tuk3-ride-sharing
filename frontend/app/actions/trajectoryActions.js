@@ -1,29 +1,42 @@
 /* eslint-disable */
 import axios from 'axios';
 
-export const getTrajectories = () => dispatch => {
-  axios.get('/trajectory/')
+export const getTrajectories = (format) => dispatch => {
+  axios.get(`/${format}/`)
     .then(function(response){
       dispatch({
         type: 'FETCH_TRAJECTORIES',
-        trajectories: response.data.trajectory_ids
+        trajectories: response.data.data.trajectory_ids
+      });
+      dispatch({
+        type: 'ADD_TIME',
+        time: response.data.time,
+        actionType: 'FETCH_TRAJECTORIES',
+        format: format.replace('-', '_'),
       })
     });
 }
 
-export const getTrajectory = (trajectoryId) => dispatch => {
+export const getTrajectory = (trajectoryId, format) => dispatch => {
   dispatch({
     type: 'START_FETCHING_TRAJECTORY',
   })
-  axios.get('/trajectory/' + trajectoryId)
+  axios.get(`/${format}/${trajectoryId}`)
     .then(function(response){
+      console.log(response.data);
       dispatch({
         type: 'FETCH_TRAJECTORY',
         selectedTrajectory: trajectoryId,
         trajectoryData: {
           trajectoryId: trajectoryId,
-          geoJsonData: response.data,
+          geoJsonData: response.data.data,
         },
+      })
+      dispatch({
+        type: 'ADD_TIME',
+        time: response.data.time,
+        actionType: 'FETCH_TRAJECTORY',
+        format: format.replace('-', '_'),
       })
     });
 }
