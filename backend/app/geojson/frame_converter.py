@@ -20,7 +20,23 @@ def frame_to_point(data):
     reshaped_data = []
     for frame in data:
         for i in range(1, len(frame), 2):
-            reshaped_data.append((frame[i], frame[i+1]))
+            reshaped_data.append((frame[i], frame[i + 1]))
+
+    return reshaped_data
+
+
+def frame_to_point_with_limit(data, max_group, max_frame):
+    reshaped_data = []
+    for frame in data:
+        group_id = frame[0]
+        frame_id = group_id * 30
+        i = 1
+
+        while i in range(1, len(frame), 2) and group_id <= max_group and frame_id <= max_frame:
+            reshaped_data.append((frame[i], frame[i + 1]))
+            frame_id = group_id * 30 + i
+            i += 2
+
     return reshaped_data
 
 

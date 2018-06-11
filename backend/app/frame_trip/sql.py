@@ -16,7 +16,7 @@ def get_all_trip_ids_sql(limit):
     '''
 
 
-def get_trip_by_id_sql(trip_id):
+def get_trip_by_id_sql(trip_id, max_group_id):
     # TODO: Remove!
     trajectory_id = trip_id[:5]
     trip_id = trip_id[5:]
@@ -31,6 +31,7 @@ def get_trip_by_id_sql(trip_id):
     FROM {FRAME_TRIPS_TABLE} 
     WHERE TRAJECTORY_ID = {trajectory_id}
     AND TRIP_ID = {trip_id}
+    AND GROUP_ID <= {max_group_id}
     ORDER BY GROUP_ID
     '''
     return sql
