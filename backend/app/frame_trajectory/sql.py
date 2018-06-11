@@ -1,10 +1,10 @@
-from app.database.const import TRAJ_SHARK_120
+from app.database.const import FRAME_TABLE
 
 
 def get_all_trajectory_ids_sql():
     return f'''
       SELECT DISTINCT TID
-      FROM {TRAJ_SHARK_120}
+      FROM {FRAME_TABLE}
     '''
 
 
@@ -15,8 +15,8 @@ def get_trajectory_by_id_sql(trajectory_id):
         Ix + P{i}x AS LON,
         Iy + P{i}y AS LAT'''
         sql += ',' if i < 119 else ''
-    sql += '''
-    FROM SHENZHEN_SHARK_DB_120 WHERE TID = 32165
+    sql += f'''
+    FROM {FRAME_TABLE} WHERE TID = {trajectory_id}
     ORDER BY FGID
     '''
     return sql
