@@ -12,6 +12,10 @@ def trajectory_ids_to_json(cursor):
     return {'trajectory_ids': [row[0] for row in cursor]}
 
 
+def trip_ids_to_json(cursor):
+    return {'trip_ids': [row[0] for row in cursor]}
+
+
 def frame_to_point(data):
     reshaped_data = []
     for frame in data:

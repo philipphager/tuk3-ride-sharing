@@ -8,11 +8,11 @@ def get_all_trajectory_ids_sql():
     '''
 
 
-def get_all_trip_ids_sql(trajectory_id):
+def get_all_trip_ids_sql(limit):
     return f'''
-      SELECT DISTINCT TRIP_ID
+      SELECT DISTINCT CONCAT(TRAJECTORY_ID, TRIP_ID)
       FROM {FRAME_TRIPS_TABLE}
-      WHERE TRAJECTORY_ID = {trajectory_id}
+      LIMIT {limit}
     '''
 
 

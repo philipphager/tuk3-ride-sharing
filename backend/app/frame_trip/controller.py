@@ -1,20 +1,15 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 
 from app.error.DatabaseNotConnected import DatabaseConnectionError
-from app.frame_trip.service import get_all_trajectory_ids, get_all_trip_ids, get_trip_by_id
+from app.frame_trip.service import get_all_trip_ids, get_trip_by_id
 
 frame_trip_controller = Blueprint('frame-trip', __name__)
 
 
 @frame_trip_controller.route('/')
-def trajectory_ids():
-    data = get_all_trajectory_ids()
-    return jsonify(data)
-
-
-@frame_trip_controller.route('/<trajectory_id>/trip')
-def trip_ids(trajectory_id):
-    data = get_all_trip_ids(trajectory_id)
+def trip_ids():
+    limit = request.args.get('limit', 1000)
+    data = get_all_trip_ids(limit)
     return jsonify(data)
 
 
