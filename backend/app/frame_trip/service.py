@@ -13,8 +13,8 @@ def get_all_trip_ids(limit):
 
 
 @timer
-def get_trip_by_id(trajectory_id, trip_id):
+def get_trip_by_id(trip_id):
     with HanaConnection() as connection:
-        connection.execute(get_trip_by_id_sql(trajectory_id, trip_id))
+        connection.execute(get_trip_by_id_sql(trip_id))
         data = connection.fetchall()
         return frame_to_geojson(frame_to_point(data))

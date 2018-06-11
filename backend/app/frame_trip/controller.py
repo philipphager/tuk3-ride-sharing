@@ -13,9 +13,9 @@ def trip_ids():
     return jsonify(data)
 
 
-@frame_trip_controller.route('/<trajectory_id>/trip/<trip_id>')
-def trajectory(trajectory_id, trip_id):
-    data = get_trip_by_id(trajectory_id, trip_id)
+@frame_trip_controller.route('/<trip_id>')
+def trip(trip_id):
+    data = get_trip_by_id(trip_id)
     return jsonify(data)
 
 
