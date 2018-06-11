@@ -8,11 +8,12 @@ def get_all_trajectory_ids_sql():
     '''
 
 
-def get_all_trip_ids_sql(limit):
+def get_all_trip_ids_sql(offset, limit):
     return f'''
       SELECT DISTINCT CONCAT(TRAJECTORY_ID, TRIP_ID)
       FROM {FRAME_TRIPS_TABLE}
       LIMIT {limit}
+      OFFSET {offset}
     '''
 
 

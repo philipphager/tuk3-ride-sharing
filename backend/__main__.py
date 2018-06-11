@@ -5,8 +5,8 @@ from flask_cors import CORS
 
 from app.frame_trajectory.controller import frame_trajectory_controller
 from app.frame_trip.controller import frame_trip_controller
-from app.point_trajectory.controller import point_trajectory_controller
 from app.key_trajectory.controller import key_trajectory_controller
+from app.point_trajectory.controller import point_trajectory_controller
 from app.point_trip.controller import point_trip_controller
 
 app = Flask(__name__, static_folder="../frontend/dist/",

@@ -6,9 +6,9 @@ from app.utils import timer
 
 
 @timer
-def get_all_trip_ids(limit):
+def get_all_trip_ids(offset, limit):
     with HanaConnection() as connection:
-        connection.execute(get_all_trip_ids_sql(limit))
+        connection.execute(get_all_trip_ids_sql(offset, limit))
         return trip_ids_to_json(connection.fetchall())
 
 

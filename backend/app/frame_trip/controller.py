@@ -9,7 +9,8 @@ frame_trip_controller = Blueprint('frame-trip', __name__)
 @frame_trip_controller.route('/')
 def trip_ids():
     limit = request.args.get('limit', 1000)
-    data = get_all_trip_ids(limit)
+    offset = request.args.get('offset', 0)
+    data = get_all_trip_ids(offset, limit)
     return jsonify(data)
 
 
