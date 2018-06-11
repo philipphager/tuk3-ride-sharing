@@ -4,7 +4,7 @@ from app.database.const import KEY_TABLE
 def get_all_trajectory_ids_sql():
     return f'''
         SELECT DISTINCT TRAJECTORY_ID
-        FROM {TRAJ_KEY}
+        FROM {KEY_TABLE}
     '''
 
 
