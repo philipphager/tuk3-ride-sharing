@@ -3,7 +3,7 @@ import { CHANGE_DATA_FORMAT, DataFormats } from "../constants";
 import { ISettingsState } from "../types";
 
 const initialState: ISettingsState = {
-    dataFormat: DataFormats.FrameTrajectory
+    dataFormat: DataFormats.PointTrip
 }
 
 export function settings(state: ISettingsState= initialState, action: SettingsAction): ISettingsState {
