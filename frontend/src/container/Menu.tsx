@@ -56,8 +56,8 @@ class Menu extends React.Component<Props, State> {
 
         const marks: SliderMarks = {
             0: '0',
-            1440: '12',
-            2880: '24'
+            43250: '12',
+            86400: '24'
         };
 
         let trajectoryIdTags: JSX.Element[]= [];
@@ -89,7 +89,7 @@ class Menu extends React.Component<Props, State> {
                     <Row>
                         <Slider
                             min={1}
-                            max={2879}
+                            max={86400}
                             marks={marks}
                             tipFormatter={this.handleFormat}
                         />
@@ -109,7 +109,7 @@ class Menu extends React.Component<Props, State> {
         if(this.state.selectedTrajectories.indexOf(value) === -1) {
             this.setState({
                 selectedTrajectories: [... this.state.selectedTrajectories, value]
-            })
+            });
         }
     }
 
@@ -124,9 +124,9 @@ class Menu extends React.Component<Props, State> {
     }
 
     private handleFormat = (value: number): string => {
-        const hour: number = Number((`0${Math.floor(value / 120)}`).slice(-2));
-        const minute: number = Number((`0${Math.floor((value / 2) - (60 * hour))}`).slice(-2));
-        return`${hour}:${minute}`;
+        const hour: number = Number((`0${Math.floor(value / (60 * 60))}`).slice(-2));
+        const minute: number = Number((`0${Math.floor((value - (60 * 60 * hour)) / 60)}`).slice(-2));
+        return`${hour}:${minute} | ${value}`;
     }
 }
 
