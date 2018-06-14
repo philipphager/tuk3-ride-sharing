@@ -84,7 +84,6 @@ class Menu extends React.Component<Props, State> {
                 </Col>
                 <Col span={8}>
                     <Row>
-                        Selected IDs:
                         {trajectoryIdTags ? trajectoryIdTags : null}
                     </Row>
                     <Row>
@@ -107,9 +106,11 @@ class Menu extends React.Component<Props, State> {
     }
 
     private onTrajectorySelect = (value: number) => {
-        this.setState({
-            selectedTrajectories: [... this.state.selectedTrajectories, value]
-        })
+        if(this.state.selectedTrajectories.indexOf(value) === -1) {
+            this.setState({
+                selectedTrajectories: [... this.state.selectedTrajectories, value]
+            })
+        }
     }
 
     private onDatFormChange = (value: DataFormats) => {
