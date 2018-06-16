@@ -65,7 +65,7 @@ class Menu extends React.Component<Props, State> {
         let trajectoryIdTags: JSX.Element[]= [];
         if (this.state.selectedTrajectories.length > 0) {
             trajectoryIdTags = this.state.selectedTrajectories.map(value => (
-                <Tag closable={true} key={value}>{value}</Tag>
+                <Tag closable={true} afterClose={() => this.handleTagClose(value)} key={value}>{value}</Tag>
             ));
         }
 
@@ -104,7 +104,6 @@ class Menu extends React.Component<Props, State> {
         );
     }
 
-
     private onTimeChange = (value: Moment) => {
         this.setState({
             trajectoryTime: value,
@@ -129,6 +128,17 @@ class Menu extends React.Component<Props, State> {
             })
     }
 
+    private handleTagClose = (value: number): void => {
+        const indexRemoveTag = this.state.selectedTrajectories.indexOf(value);
+        const newTrajectoryIDs = [
+            ...this.state.selectedTrajectories.slice(0, indexRemoveTag),
+            ...this.state.selectedTrajectories.slice(indexRemoveTag + 1)
+        ]
+        this.setState({
+            selectedTrajectories: newTrajectoryIDs
+        })
+    }
+
     private handleSliderTimeChange = (value: number): void => {
         this.setState({
             sliderTime: value,
@@ -141,7 +151,7 @@ class Menu extends React.Component<Props, State> {
 
     private handleFormat = (value: number): string => {
         const hour: number = Number((`0${Math.floor(value / (60 * 60))}`).slice(-2));
-        const minute: number = Number((`0${Math.floor((value - (60 * 60 * hour)) / 60)}`).slice(-2));
+        const minute: number = Number((`00${Math.floor((value - (60 * 60 * hour)) / 60)}`).slice(-2));
         return`${hour}:${minute} | ${value}`;
     }
 }
