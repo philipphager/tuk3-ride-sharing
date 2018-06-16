@@ -5,14 +5,17 @@ import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import * as actions from '../actions';
 import { DataFormats } from "../constants";
-import { ISettingsState } from "../types";
+import { IStoreState } from "../types";
 
 import { SliderMarks } from "antd/lib/slider";
 import { Moment } from "moment";
 import './Menu.css';
+
 interface Props {
-    dataFormat: DataFormats,
+    dataFormat: DataFormats;
     onDataFrameChange: (x: DataFormats) => void;
+    addTrajectoryData: (x: any) => void;
+    resetTrajectoryData: () => void;
 }
 
 interface State {
@@ -22,6 +25,7 @@ interface State {
     sliderTime: number;
     trajectoryIds: number[];
     selectedTrajectories: number[];
+    selectedTime: number;
 }
 
 class Menu extends React.Component<Props, State> {
@@ -33,7 +37,8 @@ class Menu extends React.Component<Props, State> {
             trajectoryTime: moment(),
             sliderTime: 43250,
             trajectoryIds: [],
-            selectedTrajectories: []
+            selectedTrajectories: [],
+            selectedTime: 43250,
         }
     }
 
@@ -72,7 +77,7 @@ class Menu extends React.Component<Props, State> {
         return (
             <Row className="menuBar" gutter={24} justify="center" type="flex" align="middle">
                 <Col span={4}>
-                    <Select size="default" style={{ width: '100px'}} value={this.props.dataFormat} onChange={ this.onDatFormChange }>
+                    <Select size="default" style={{ width: '100px'}} value={this.props.dataFormat} onChange={ this.onDataFormChange }>
                         {selectFormatOptions}
                     </Select>
                 </Col>
@@ -116,9 +121,13 @@ class Menu extends React.Component<Props, State> {
                 selectedTrajectories: [... this.state.selectedTrajectories, value]
             });
         }
+        axios.get(`/${this.props.dataFormat}/${value}?time=${this.state.selectedTime}`)
+            .then(response => {
+                this.props.addTrajectoryData(response.data.data);
+            })
     }
 
-    private onDatFormChange = (value: DataFormats): void => {
+    private onDataFormChange = (value: DataFormats): void => {
         this.props.onDataFrameChange(value);
         axios.get(`/${value}/?limit=1000&offset=0`)
             .then(response => {
@@ -146,7 +155,10 @@ class Menu extends React.Component<Props, State> {
     }
 
     private handleSliderTimeChangeStop = (value: number): void => {
-        console.log("Es ist passiert")
+        this.setState({
+            selectedTime: value
+        })
+        this.handleTrajectoryUpdate();
     }
 
     private handleFormat = (value: number): string => {
@@ -154,19 +166,35 @@ class Menu extends React.Component<Props, State> {
         const minute: number = Number((`00${Math.floor((value - (60 * 60 * hour)) / 60)}`).slice(-2));
         return`${hour}:${minute} | ${value}`;
     }
-}
 
-export function mapSateToProps({ dataFormat }: ISettingsState) {
-    return {
-        dataFormat
+    private handleTrajectoryUpdate = (): void => {
+        this.props.resetTrajectoryData();
+        this.state.selectedTrajectories.forEach(value => {
+            axios.get(`/${this.props.dataFormat}/${value}?time=${this.state.selectedTime}`)
+            .then(response => {
+                this.props.addTrajectoryData(response.data.data);
+            })
+        })
     }
 }
 
-export function mapDispatchToProps(dispatch: Dispatch<actions.SettingsAction>) {
+export function mapSateToProps({ settings }: IStoreState) {
+    return {
+        dataFormat: settings.dataFormat
+    }
+}
+
+export function mapDispatchToProps(dispatch: Dispatch<actions.MenuAction>) {
     return {
         onDataFrameChange: (newDataFormat: DataFormats) => {
             dispatch(actions.changeDataFormat(newDataFormat))
         },
+        addTrajectoryData: (data: any) => {
+            dispatch(actions.addTrajectoryData(data))
+        },
+        resetTrajectoryData: () => {
+            dispatch(actions.resetTrajectoryData())
+        }
     }
 }
 

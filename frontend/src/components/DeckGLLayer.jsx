@@ -15,7 +15,7 @@ const DeckGlLayer = ({ data, viewport }) => {
             extruded: true,
             lineWidthScale: 10,
             lineWidthMinPixels: 2,
-            // getLineColor: d => d.properties.color,
+            getLineColor: d => d.properties.color,
         });
     });
 

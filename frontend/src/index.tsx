@@ -4,11 +4,11 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import App from './App';
 import './index.css';
-import { settings } from './reducer/index';
+import reducer from './reducer';
 import registerServiceWorker from './registerServiceWorker';
 
 const store = createStore(
-  settings,
+  reducer,
   (window as any).__REDUX_DEVTOOLS_EXTENSION__ &&
     (window as any).__REDUX_DEVTOOLS_EXTENSION__()
   );
