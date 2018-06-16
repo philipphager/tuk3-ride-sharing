@@ -1,5 +1,3 @@
-import json
-
 from geojson import Feature, LineString
 
 
@@ -44,9 +42,3 @@ def frame_to_point_with_limit(data, max_group, max_frame):
             i += 2
 
     return first_frame_id, last_frame_id, reshaped_data
-
-
-def unpack_key_value_object(trajectory):
-    nclob = trajectory[1].read()
-    samples = json.loads(nclob)
-    return [(sample[1], sample[2]) for sample in samples]
