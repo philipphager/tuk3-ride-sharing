@@ -121,7 +121,7 @@ class Menu extends React.Component<Props, State> {
                 selectedTrajectories: [... this.state.selectedTrajectories, value]
             });
         }
-        axios.get(`/${this.props.dataFormat}/${value}?time=${this.state.selectedTime}`)
+        axios.get(`/${this.props.dataFormat}/${value}?max_time=${this.state.selectedTime}`)
             .then(response => {
                 this.props.addTrajectoryData(response.data.data);
             })
@@ -129,7 +129,7 @@ class Menu extends React.Component<Props, State> {
 
     private onDataFormChange = (value: DataFormats): void => {
         this.props.onDataFrameChange(value);
-        axios.get(`/${value}/?limit=1000&offset=0`)
+        axios.get(`/${value}?limit=1000&offset=0`)
             .then(response => {
                 this.setState({
                     trajectoryIds: response.data.data.trip_ids
@@ -170,7 +170,7 @@ class Menu extends React.Component<Props, State> {
     private handleTrajectoryUpdate = (): void => {
         this.props.resetTrajectoryData();
         this.state.selectedTrajectories.forEach(value => {
-            axios.get(`/${this.props.dataFormat}/${value}?time=${this.state.selectedTime}`)
+            axios.get(`/${this.props.dataFormat}/${value}?max_time=${this.state.selectedTime}`)
             .then(response => {
                 this.props.addTrajectoryData(response.data.data);
             })
