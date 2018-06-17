@@ -1,11 +1,10 @@
-/* eslint-disable */
+import { notification } from 'antd';
+// @ts-ignore
 import DeckGL, { GeoJsonLayer } from 'deck.gl';
-import PropTypes from 'prop-types';
 import * as React from 'react';
-/* eslint-enable */
 
-const DeckGlLayer = ({ data, viewport }) => {
-    const layers = data.map((trajectoryData, index) => {
+const DeckGlLayer = ({ data, viewport }: any) => {
+    const layers = data.map((trajectoryData: any, index: number) => {
         return new GeoJsonLayer({
             id: index,
             data: trajectoryData,
@@ -15,7 +14,11 @@ const DeckGlLayer = ({ data, viewport }) => {
             extruded: true,
             lineWidthScale: 10,
             lineWidthMinPixels: 2,
-            getLineColor: d => d.properties.color,
+            getLineColor: (d: any) => d.properties.color,
+            onHover: () => notification.open({
+                message: 'Trajectory Information',
+                description: 'as'
+            })
         });
     });
 
