@@ -129,7 +129,7 @@ class Menu extends React.Component<Props, State> {
 
     private onDataFormChange = (value: DataFormats): void => {
         this.props.onDataFrameChange(value);
-        axios.get(`/${value}?limit=1000&offset=0`)
+        axios.get(`/${value}/?limit=1000&offset=0`)
             .then(response => {
                 this.setState({
                     trajectoryIds: response.data.data.trip_ids

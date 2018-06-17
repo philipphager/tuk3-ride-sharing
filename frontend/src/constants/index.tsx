@@ -4,6 +4,7 @@ export type CHANGE_DATA_FORMAT = typeof CHANGE_DATA_FORMAT;
 export enum DataFormats {
     PointTrip = "point-trip",
     FrameTrip = "frame-trip",
+    KeyTrip = "key-trip",
 }
 
 export type DataFormat = typeof DataFormats;
