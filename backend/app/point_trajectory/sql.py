@@ -10,7 +10,7 @@ def get_all_trajectory_ids_sql():
 
 def get_trajectory_by_id_sql(trajectory_id):
     sql = f'''
-    SELECT 
+    SELECT
         LON,
         LAT
     FROM {POINT_TABLE}

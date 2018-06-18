@@ -20,4 +20,3 @@ def get_trip_by_id_sql(trip_id):
     WHERE ID = {trip_id}
     '''
     return sql
-

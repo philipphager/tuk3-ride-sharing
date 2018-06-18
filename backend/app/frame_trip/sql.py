@@ -20,7 +20,7 @@ def get_trip_by_id_sql(trip_id, max_group_id):
         Iy + P{i}y AS LAT'''
         sql += ',' if i < 29 else ''
     sql += f'''
-    FROM {FRAME_TRIPS_TABLE} 
+    FROM {FRAME_TRIPS_TABLE}
     WHERE ID = {trip_id}
     AND GROUP_ID <= {max_group_id}
     ORDER BY GROUP_ID

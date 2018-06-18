@@ -6,6 +6,7 @@ def key_value_to_geojson(values):
     points = [(value[0], value[1]) for value in values if value[0] and value[0]]
     return Feature(geometry=LineString(points))
 
+
 def trajectory_ids_to_json(cursor):
     return {'trajectory_ids': [row[0] for row in cursor]}
 
