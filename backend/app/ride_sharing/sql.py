@@ -11,13 +11,13 @@ def get_shared_rides_sql():
     threshold = 0.03
 
     sql = f'''
-        SELECT 
-            key_value.TRIP_ID, 
+        SELECT
+            key_value.TRIP_ID,
             key_value.OBJ,
             frame.DISTANCE_START,
             frame.DISTANCE_END
         FROM (
-            SELECT 
+            SELECT
                 ID as TRIP_ID, 
                 OBJ
             FROM KEY_VALUE_TRIPS
@@ -35,10 +35,10 @@ def get_shared_rides_sql():
                 FROM FRAME_TRIPS s
                 INNER JOIN FRAME_TRIPS e
                 ON s.GROUP_ID = {start_group_id}
-                AND s.P{start_frame}X IS NOT NULL 
+                AND s.P{start_frame}X IS NOT NULL
                 AND s.P{start_frame}Y IS NOT NULL
                 AND e.GROUP_ID = {end_group_id}
-                AND e.P{end_frame}X IS NOT NULL 
+                AND e.P{end_frame}X IS NOT NULL
                 AND e.P{end_frame}Y IS NOT NULL
                 AND s.ID = e.ID
             )
