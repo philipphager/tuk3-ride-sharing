@@ -1,7 +1,7 @@
 from geojson import LineString, Feature
 
 
-def create_geojson(data, trip_id, timestamps, start, end, duration):
+def create_geojson(trip_id, data, timestamps, start, end, duration):
     properties = {
         'trip_id': trip_id,
         'timestamps': timestamps,

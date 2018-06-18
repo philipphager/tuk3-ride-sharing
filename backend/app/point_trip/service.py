@@ -35,4 +35,4 @@ def to_geojson(trip_id, cursor):
         end = timestamps[-1]
         duration = end - start
 
-    return create_geojson(points, trip_id, timestamps, start, end, duration)
+    return create_geojson(trip_id, points, timestamps, start, end, duration)
