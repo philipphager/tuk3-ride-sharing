@@ -1,28 +1,31 @@
 from app.database.hana_connector import HanaConnection
-from app.frame_trajectory.sql import get_all_trajectory_ids_sql
 from app.frame_trip.sql import get_all_trip_ids_sql, get_trip_by_id_sql
-from app.geojson.frame_converter import frame_to_geojson, \
-    trajectory_ids_to_json, frame_to_point
+from app.geojson.frame_converter import trip_ids_to_json, frame_to_point_with_limit
+from app.geojson.geojson_utils import create_geojson
 from app.utils import timer
 
 
 @timer
-def get_all_trajectory_ids():
+def get_all_trip_ids(time, offset, limit):
     with HanaConnection() as connection:
-        connection.execute(get_all_trajectory_ids_sql())
-        return trajectory_ids_to_json(connection.fetchall())
+        group_id = (time // 900) + 1
+        connection.execute(get_all_trip_ids_sql(group_id, offset, limit))
+        return trip_ids_to_json(connection.fetchall())
 
 
 @timer
-def get_all_trip_ids(trajectory_id):
+def get_trip_by_id(trip_id, max_time):
     with HanaConnection() as connection:
-        connection.execute(get_all_trip_ids_sql(trajectory_id))
-        return trajectory_ids_to_json(connection.fetchall())
+        # 900 = 60 Seconds per Minute * 15 Minutes per frames
+        max_group = (max_time // 900) + 1
+        connection.execute(get_trip_by_id_sql(trip_id, max_group))
+        cursor = connection.fetchall()
+        points, timestamps = frame_to_point_with_limit(cursor, max_time)
+        return to_geojson(trip_id, points, timestamps)
 
 
-@timer
-def get_trip_by_id(trajectory_id, trip_id):
-    with HanaConnection() as connection:
-        connection.execute(get_trip_by_id_sql(trajectory_id, trip_id))
-        data = connection.fetchall()
-        return frame_to_geojson(frame_to_point(data))
+def to_geojson(trip_id, points, timestamps):
+    start = timestamps[0] if len(timestamps) > 0 else 0
+    end = timestamps[-1] if len(timestamps) > 0 else 0
+    duration = end - start
+    return create_geojson(trip_id, points, timestamps, start, end, duration)
