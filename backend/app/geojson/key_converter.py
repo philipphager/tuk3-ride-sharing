@@ -21,10 +21,10 @@ def key_trip_to_geojson(trip):
         points.append((sample[1], sample[2]))
 
     if len(timestamps) > 0:
-        if trip[3] == timestamps[0]:
-            start = trip[3]
-        if trip[2] == timestamps[-1]:
-            end = trip[2]
+        if trip[2] == timestamps[0]:
+            start = trip[2]
+        if trip[3] == timestamps[-1]:
+            end = trip[3]
         duration = end - start
 
     properties = {'timestamps': timestamps, 'start_time': start, 'end_time': end, 'duration_time': duration}
