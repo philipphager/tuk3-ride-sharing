@@ -35,7 +35,8 @@ app.register_blueprint(key_trip_controller,
                        url_prefix='/key-trip')
 
 app.register_blueprint(ride_sharing_controller,
-                       url_prefix='/ride_sharing')
+                       url_prefix='/ride-sharing')
+
 
 @app.route('/', defaults={'path': ''})
 def home(path):
