@@ -8,15 +8,17 @@ key_trip_controller = Blueprint('key-trip', __name__)
 
 @key_trip_controller.route('/')
 def trip_ids():
+    time = request.args.get('time', 0, int)
     limit = request.args.get('limit', 1000)
     offset = request.args.get('offset', 0)
-    data = get_all_trip_ids(offset, limit)
+    data = get_all_trip_ids(time, offset, limit)
     return jsonify(data)
 
 
 @key_trip_controller.route('/<trip_id>')
 def trip(trip_id):
-    data = get_trip_by_id(trip_id)
+    max_time = request.args.get('max_time', 86400, int)
+    data = get_trip_by_id(trip_id, max_time)
     return jsonify(data)
 
 

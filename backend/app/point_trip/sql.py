@@ -6,6 +6,7 @@ def get_all_trip_ids_sql(time, offset, limit):
       SELECT DISTINCT ID
       FROM {POINT_TRIPS_TABLE}
       WHERE timestamp = {time}
+      ORDER BY ID
       LIMIT {limit}
       OFFSET {offset}
     '''
