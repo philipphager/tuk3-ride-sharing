@@ -5,8 +5,10 @@ from flask_cors import CORS
 
 from app.frame_trajectory.controller import frame_trajectory_controller
 from app.frame_trip.controller import frame_trip_controller
-from app.point_trajectory.controller import point_trajectory_controller
 from app.key_trajectory.controller import key_trajectory_controller
+from app.point_trajectory.controller import point_trajectory_controller
+
+from app.ride_sharing.controller import ride_sharing_controller
 
 app = Flask(__name__, static_folder="../frontend/dist/",
             template_folder="../frontend/dist/")
@@ -24,6 +26,8 @@ app.register_blueprint(point_trajectory_controller,
 
 app.register_blueprint(key_trajectory_controller,
                        url_prefix='/key-trajectory')
+
+app.register_blueprint(ride_sharing_controller, url_prefix='/ride_sharing')
 
 
 @app.route('/', defaults={'path': ''})
