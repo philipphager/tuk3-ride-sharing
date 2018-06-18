@@ -19,5 +19,3 @@ def get_trajectory_by_id(trajectory_id):
         connection.execute(get_trajectory_by_id_sql(trajectory_id))
         data = unpack_key_value_object(connection.fetchone())
         return key_value_to_geojson(data)
-
-

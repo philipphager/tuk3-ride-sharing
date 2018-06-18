@@ -23,22 +23,32 @@ def frame_to_point(data):
     return reshaped_data
 
 
-def frame_to_point_with_limit(data, max_group, max_frame):
-    reshaped_data = []
-    first_frame_id = 0
-    last_frame_id = 0
+def frame_to_point_with_limit(cursor, max_time):
+    points = []
+    timestamps = []
 
-    for frame in data:
-        group_id = frame[0]
-        frame_id = group_id * 30
-        first_frame_id = frame_id
-        i = 1
+    for frame_group in cursor:
+        group_id = frame_group[0]
+        frames = frame_group[1:]
+        i = 0
 
-        while i in range(1, len(frame), 2) and group_id <= max_group and frame_id <= max_frame:
-            reshaped_data.append((frame[i], frame[i + 1]))
-            frame_id = group_id * 30 + (i // 2)
-            if frame[i]:
-                last_frame_id = frame_id
-            i += 2
+        while i < len(frames):
+            if not frames[i] or frames[i] == 0:
+                i += 1
+                continue
 
-    return first_frame_id, last_frame_id, reshaped_data
+            time = _timestamp(group_id, i)
+
+            if time < max_time:
+                points.append((frames[i], frames[i + 1]))
+                timestamps.append(time)
+                i += 2
+            else:
+                break
+
+    return points, timestamps
+
+
+def _timestamp(group_id, index_in_array):
+    frame = (group_id - 1) * 30 + (index_in_array // 2)
+    return frame * 30

@@ -1,10 +1,12 @@
 from app.database.const import POINT_TRIPS_TABLE
 
 
-def get_all_trip_ids_sql(offset, limit):
+def get_all_trip_ids_sql(time, offset, limit):
     return f'''
       SELECT DISTINCT ID
       FROM {POINT_TRIPS_TABLE}
+      WHERE timestamp = {time}
+      ORDER BY ID
       LIMIT {limit}
       OFFSET {offset}
     '''
