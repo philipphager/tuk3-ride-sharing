@@ -1,10 +1,11 @@
 from app.database.const import FRAME_TRIPS_TABLE
 
 
-def get_all_trip_ids_sql(offset, limit):
+def get_all_trip_ids_sql(group_id, offset, limit):
     return f'''
       SELECT DISTINCT ID
       FROM {FRAME_TRIPS_TABLE}
+      WHERE group_id = {group_id}
       ORDER BY ID
       LIMIT {limit}
       OFFSET {offset}
