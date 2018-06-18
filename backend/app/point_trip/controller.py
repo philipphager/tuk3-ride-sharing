@@ -8,9 +8,10 @@ point_trip_controller = Blueprint('point-trip', __name__)
 
 @point_trip_controller.route('/')
 def trip_ids():
+    time = request.args.get('time', 0, int)
     limit = request.args.get('limit', 1000)
     offset = request.args.get('offset', 0)
-    data = get_all_trip_ids(offset, limit)
+    data = get_all_trip_ids(time, offset, limit)
     return jsonify(data)
 
 
