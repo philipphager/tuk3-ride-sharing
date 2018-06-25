@@ -13,8 +13,8 @@ def get_all_trip_ids_sql(group_id, offset, limit):
 
 
 def get_trip_by_id_sql(trip_id, max_group_id):
-    sql = 'SELECT GROUP_ID, IX, IY,'
-    for i in range(1, 30):
+    sql = 'SELECT GROUP_ID,'
+    for i in range(0, 30):
         sql += f'''
         Ix + P{i}x AS LON,
         Iy + P{i}y AS LAT'''
