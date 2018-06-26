@@ -1,9 +1,8 @@
-import { notification } from 'antd';
 // @ts-ignore
 import DeckGL, { GeoJsonLayer } from 'deck.gl';
 import * as React from 'react';
 
-const DeckGlLayer = ({ data, viewport }: any) => {
+const DeckGlLayer = ({ data, viewport, onHover}: any) => {
     const layers = data.map((trajectoryData: any, index: number) => {
         return new GeoJsonLayer({
             id: index,
@@ -12,13 +11,14 @@ const DeckGlLayer = ({ data, viewport }: any) => {
             stroked: false,
             filled: true,
             extruded: true,
-            lineWidthScale: 10,
-            lineWidthMinPixels: 2,
+            lineWidthScale: 12,
+            lineWidthMinPixels: 4,
             getLineColor: (d: any) => d.properties.color,
-            onHover: () => notification.open({
-                message: 'Trajectory Information',
-                description: 'as'
-            })
+            onHover: ({ object }: any) => {
+                if (object) {
+                    onHover(object.properties);
+                }
+            }
         });
     });
 

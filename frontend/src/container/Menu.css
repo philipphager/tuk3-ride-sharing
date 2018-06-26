@@ -7,3 +7,7 @@
 .ant-slider-mark-text {
     color: white;
 }
+
+.distanceSlider {
+    width: 50px;
+}
