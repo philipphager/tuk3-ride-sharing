@@ -1,4 +1,4 @@
-import { Button, Col, Row, Select, Slider, TimePicker } from "antd";
+import { Button, Col, message, Row, Select, Slider, TimePicker } from "antd";
 import axios from 'axios';
 import * as moment from 'moment';
 import { Moment } from "moment";
@@ -22,6 +22,7 @@ interface State {
     selectedTime: number;
     selectedTripId: number;
     distance: number;
+    isLoading: boolean;
 }
 
 class Menu extends React.Component<Props, State> {
@@ -33,7 +34,8 @@ class Menu extends React.Component<Props, State> {
             selectedTrajectories: [],
             selectedTime: 43250,
             selectedTripId: 22248000,
-            distance: 10
+            distance: 10,
+            isLoading: false,
         }
     }
 
@@ -67,7 +69,7 @@ class Menu extends React.Component<Props, State> {
                     <Slider className="distanceSlider" min={0} max={1000} step={1} onChange={this.handleDistanceChange}/>
                 </Col>
                 <Col span={2}>
-                    <Button onClick={this.handleRideSharingRequest}>Run</Button>
+                    <Button loading={this.state.isLoading} onClick={this.handleRideSharingRequest}>Search</Button>
                 </Col>
             </Row>
         );
@@ -86,6 +88,7 @@ class Menu extends React.Component<Props, State> {
     }
 
     private handleRideSharingRequest = (): void => {
+        this.setState({ isLoading: true });
         axios.get(`/ride-sharing/${this.state.selectedTripId}?distance=${this.state.distance}`)
             .then(response => {
                 if(response.data && response.data.length > 0) {
@@ -94,13 +97,22 @@ class Menu extends React.Component<Props, State> {
                         this.props.addTrajectoryData(trajectory);
                     });
                 }
+                this.setState({ isLoading: false });
+            })
+            .catch((reason: any) => {
+                message.error('Failed to load similary trips');
             })
     }
 
     private onTrajectorySelect = (value: number): void => {
         this.setState({
             selectedTripId: value
-        })
+        });
+        axios.get(`/point-trip/${value}`)
+            .then((response: any) => {
+                console.log(response.data);
+                this.props.addTrajectoryData(response.data.data);
+            })
     }
 }
 
