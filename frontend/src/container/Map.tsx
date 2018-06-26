@@ -1,4 +1,8 @@
 import { Col, Row } from 'antd';
+// @ts-ignore
+import hashColor from 'hash-color-material';
+// @ts-ignore
+import hexRgb from 'hex-rgb';
 import * as React from 'react';
 // @ts-ignore
 import Dimensions from 'react-dimensions';
@@ -35,19 +39,12 @@ class Map extends React.Component<Props, any> {
     }
 
     public render() {
-        const colors = [
-            [255, 139, 139, 255],
-            [97, 191, 173, 255],
-            [15, 207, 97, 255],
-            [55, 23, 34, 255],
-            [27, 29, 28, 255],
-            [119, 238, 223, 255],
-        ];
-        const data = this.props.trajectoryData.map((trajData, index) => {
+        const data = this.props.trajectoryData.map((trajData: any) => {
+            console.log(trajData.properties.trip_id);
             return {
                 type: trajData.type,
                 properties: {
-                    color: colors[index],
+                    color: hexRgb(hashColor.getColorFromString(String(trajData.properties.trip_id)), {format: 'array'}),
                     ...trajData.properties,
                 },
                 geometry: {

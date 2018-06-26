@@ -11,8 +11,8 @@ const DeckGlLayer = ({ data, viewport, onHover}: any) => {
             stroked: false,
             filled: true,
             extruded: true,
-            lineWidthScale: 12,
-            lineWidthMinPixels: 4,
+            lineWidthScale: 6,
+            lineWidthMinPixels: 3,
             getLineColor: (d: any) => d.properties.color,
             onHover: ({ object }: any) => {
                 if (object) {
