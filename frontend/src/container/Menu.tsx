@@ -13,6 +13,7 @@ interface Props {
     dataFormat: DataFormats;
     onDataFrameChange: (x: DataFormats) => void;
     addTrajectoryData: (x: any) => void;
+    resetTrajectoryData: () => void;
 }
 
 interface State {
@@ -105,12 +106,13 @@ class Menu extends React.Component<Props, State> {
     }
 
     private onTrajectorySelect = (value: number): void => {
+        this.props.resetTrajectoryData();
         this.setState({
             selectedTripId: value
         });
         axios.get(`/point-trip/${value}`)
             .then((response: any) => {
-                console.log(response.data);
+                console.log(response.data.data);
                 this.props.addTrajectoryData(response.data.data);
             })
     }
@@ -129,6 +131,9 @@ export function mapDispatchToProps(dispatch: Dispatch<actions.MenuAction>) {
         },
         addTrajectoryData: (data: any) => {
             dispatch(actions.addTrajectoryData(data))
+        },
+        resetTrajectoryData: () => {
+            dispatch(actions.resetTrajectoryData())
         }
     }
 }
