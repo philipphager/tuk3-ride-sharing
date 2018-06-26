@@ -1,5 +1,4 @@
-import { Col, Row, Select, Slider, Tag, TimePicker } from "antd";
-import { Button } from "antd/lib/radio";
+import { Button, Col, Row, Select, Slider, TimePicker } from "antd";
 import axios from 'axios';
 import * as moment from 'moment';
 import { Moment } from "moment";
@@ -17,26 +16,24 @@ interface Props {
 }
 
 interface State {
-    isPlaying: boolean;
-    stepSize: number;
     trajectoryTime: Moment;
-    sliderTime: number;
     trajectoryIds: number[];
     selectedTrajectories: number[];
     selectedTime: number;
+    selectedTripId: number;
+    distance: number;
 }
 
 class Menu extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            isPlaying: false,
-            stepSize: 1,
             trajectoryTime: moment(),
-            sliderTime: 43250,
             trajectoryIds: [],
             selectedTrajectories: [],
             selectedTime: 43250,
+            selectedTripId: 22248000,
+            distance: 10
         }
     }
 
@@ -55,12 +52,6 @@ class Menu extends React.Component<Props, State> {
             (<Select.Option key={value} value={value}>{value}</Select.Option>)
         );
 
-        let trajectoryIdTags: JSX.Element[]= [];
-        if (this.state.selectedTrajectories.length > 0) {
-            trajectoryIdTags = this.state.selectedTrajectories.map(value => (
-                <Tag closable={true} afterClose={() => this.handleTagClose(value)} key={value}>{value}</Tag>
-            ));
-        }
 
         return (
             <Row className="menuBar" gutter={24} justify="center" type="flex" align="middle">
@@ -68,20 +59,15 @@ class Menu extends React.Component<Props, State> {
                     <TimePicker onChange={this.onTimeChange} value={this.state.trajectoryTime} />
                 </Col>
                 <Col span={3}>
-                    <Select size="default" style={{ width: '100px'}} placeholder="Select Trajectory Id" onSelect={this.onTrajectorySelect}>
+                    <Select size="default" style={{ width: '100px'}} value={this.state.selectedTripId} placeholder="Select Trajectory Id" onSelect={this.onTrajectorySelect}>
                         {selectTrajectoryIdsOptions}
                     </Select>
                 </Col>
-                <Col span={2}>
-                    <Slider className="distanceSlider" min={0} max={100} step={0.01}/>
+                <Col span={5}>
+                    <Slider className="distanceSlider" min={0} max={1000} step={1} onChange={this.handleDistanceChange}/>
                 </Col>
                 <Col span={2}>
-                    <Button>Run</Button>
-                </Col>
-                <Col span={8}>
-                    <Row>
-                        {trajectoryIdTags ? trajectoryIdTags : null}
-                    </Row>
+                    <Button onClick={this.handleRideSharingRequest}>Run</Button>
                 </Col>
             </Row>
         );
@@ -89,40 +75,31 @@ class Menu extends React.Component<Props, State> {
 
     private onTimeChange = (value: Moment) => {
         this.setState({
-            trajectoryTime: value,
+            trajectoryTime: value
         })
+    }
+
+    private handleDistanceChange = (value: any): void => {
+        this.setState({
+            distance: value
+        })
+    }
+
+    private handleRideSharingRequest = (): void => {
+        axios.get(`/ride-sharing/${this.state.selectedTripId}?distance=${this.state.distance}`)
+            .then(response => {
+                if(response.data && response.data.length > 0) {
+                    console.log(response.data);
+                    response.data.forEach((trajectory: any) => {
+                        this.props.addTrajectoryData(trajectory);
+                    });
+                }
+            })
     }
 
     private onTrajectorySelect = (value: number): void => {
-        if(this.state.selectedTrajectories.indexOf(value) === -1) {
-            this.setState({
-                selectedTrajectories: [... this.state.selectedTrajectories, value]
-            });
-        }
-        axios.get(`/${this.props.dataFormat}/${value}?max_time=${this.state.selectedTime}`)
-            .then(response => {
-                this.props.addTrajectoryData(response.data.data);
-            })
-    }
-
-    private handleTagClose = (value: number): void => {
-        const indexRemoveTag = this.state.selectedTrajectories.indexOf(value);
-        const newTrajectoryIDs = [
-            ...this.state.selectedTrajectories.slice(0, indexRemoveTag),
-            ...this.state.selectedTrajectories.slice(indexRemoveTag + 1)
-        ]
         this.setState({
-            selectedTrajectories: newTrajectoryIDs
-        })
-        this.handleTrajectoryUpdate();
-    }
-
-    private handleTrajectoryUpdate = (): void => {
-        this.state.selectedTrajectories.forEach(value => {
-            axios.get(`/${this.props.dataFormat}/${value}?max_time=${this.state.selectedTime}`)
-            .then(response => {
-                this.props.addTrajectoryData(response.data.data);
-            })
+            selectedTripId: value
         })
     }
 }
