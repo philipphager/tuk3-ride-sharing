@@ -9,8 +9,8 @@ def get_all_trajectory_ids_sql():
 
 
 def get_trajectory_by_id_sql(trajectory_id):
-    sql = 'SELECT FGID, IX, IY,'
-    for i in range(1, 120):
+    sql = 'SELECT FGID,'
+    for i in range(0, 120):
         sql += f'''
         Ix + P{i}x AS LON,
         Iy + P{i}y AS LAT'''
