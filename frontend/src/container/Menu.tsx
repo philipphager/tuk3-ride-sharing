@@ -80,6 +80,15 @@ class Menu extends React.Component<Props, State> {
         this.setState({
             trajectoryTime: value
         })
+        const seconds: number = value.diff(moment().startOf('day'), 'seconds');
+        axios.get(`/${this.props.dataFormat}/?limit=1000&offset=0&time=${seconds}`)
+            .then(response => {
+                console.log(response);
+                this.setState({
+                    trajectoryIds: response.data.data.trip_ids
+                })
+            })
+
     }
 
     private handleDistanceChange = (value: any): void => {
