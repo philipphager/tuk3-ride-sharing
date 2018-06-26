@@ -67,7 +67,7 @@ class Menu extends React.Component<Props, State> {
                     </Select>
                 </Col>
                 <Col span={5}>
-                    <Slider className="distanceSlider" min={0} max={1000} step={1} onChange={this.handleDistanceChange}/>
+                    <Slider className="distanceSlider" min={0} max={3000} step={1} onChange={this.handleDistanceChange}/>
                 </Col>
                 <Col span={2}>
                     <Button loading={this.state.isLoading} onClick={this.handleRideSharingRequest}>Search</Button>
