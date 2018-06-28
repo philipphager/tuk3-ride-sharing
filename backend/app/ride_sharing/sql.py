@@ -1,3 +1,6 @@
+from app.database.const import FRAME_TRIPS_TABLE
+
+
 def get_shared_rides_sql(start_lon,
                          start_lat,
                          start_group,
@@ -8,17 +11,31 @@ def get_shared_rides_sql(start_lon,
                          end_frame,
                          threshold
                          ):
+    frame_columns = ""
+    for i in range(0, 30):
+        frame_columns += f'''
+              Ix + P{i}x AS LON{i},
+              Iy + P{i}y AS LAT{i}'''
+        frame_columns += ',' if i < 29 else ''
+
+    lon_lat = ""
+    for i in range(0, 30):
+        lon_lat += f'''
+              LON{i},
+              LAT{i}'''
+        lon_lat += ',' if i < 29 else ''
     sql = f'''
         SELECT 
-            key_value.TRIP_ID, 
-            key_value.OBJ, 
-            frame.DISTANCE_START, 
-            frame.DISTANCE_END
+            trips.TRIP_ID, 
+            trips.GROUP_ID,
+            {lon_lat}, 
+            shared.DISTANCE_START, 
+            shared.DISTANCE_END
         FROM (
-            SELECT 
-                ID as TRIP_ID, 
-                OBJ from KEY_VALUE_TRIPS
-        ) key_value INNER JOIN (
+            SELECT GROUP_ID, ID as TRIP_ID,{frame_columns}
+            FROM {FRAME_TRIPS_TABLE}
+            ORDER BY GROUP_ID
+        ) trips INNER JOIN (
             SELECT 
                 TRIP_ID, 
                 DISTANCE_START, 
@@ -39,8 +56,8 @@ def get_shared_rides_sql(start_lon,
             )
             WHERE DISTANCE_START <= {threshold}
             AND DISTANCE_END <= {threshold}
-        ) frame
-        ON key_value.TRIP_ID = frame.TRIP_ID
+        ) shared
+        ON trips.TRIP_ID = shared.TRIP_ID
         '''
     return sql
 
