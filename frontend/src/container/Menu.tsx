@@ -24,6 +24,7 @@ interface State {
     selectedTripId: number;
     distance: number;
     isLoading: boolean;
+    numberOfTrips: number;
 }
 
 class Menu extends React.Component<Props, State> {
@@ -37,6 +38,7 @@ class Menu extends React.Component<Props, State> {
             selectedTripId: 22248000,
             distance: 10,
             isLoading: false,
+            numberOfTrips: 0,
         }
     }
 
@@ -71,6 +73,9 @@ class Menu extends React.Component<Props, State> {
                 </Col>
                 <Col span={2}>
                     <Button loading={this.state.isLoading} onClick={this.handleRideSharingRequest}>Search</Button>
+                </Col>
+                <Col span={4}>
+                    Number of Trips: {this.state.numberOfTrips}
                 </Col>
             </Row>
         );
@@ -107,7 +112,10 @@ class Menu extends React.Component<Props, State> {
                         this.props.addTrajectoryData(trajectory);
                     });
                 }
-                this.setState({ isLoading: false });
+                this.setState({
+                    isLoading: false,
+                    numberOfTrips: response.data.length
+                });
             })
             .catch((reason: any) => {
                 message.error('Failed to load similary trips');
