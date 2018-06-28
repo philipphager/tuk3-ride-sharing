@@ -1,3 +1,5 @@
+from flask import jsonify
+
 from app.database.hana_connector import HanaConnection
 from app.geojson.geojson_utils import create_geojson
 from app.ride_sharing.sql import get_shared_rides_sql, get_start_and_end
@@ -7,6 +9,7 @@ import json
 def get_shared_rides(trip_id, threshold):
     with HanaConnection() as connection:
         connection.execute(get_start_and_end(trip_id))
+        # TODO get start and end with frame trips
         start_group, start_frame, end_group, end_frame, data = connection.fetchone()
         sample = json.load(data)
         start_lon = sample[0][1]
@@ -16,7 +19,8 @@ def get_shared_rides(trip_id, threshold):
         connection.execute(get_shared_rides_sql(start_lon, start_lat, start_group, start_frame, end_lon,
                                                 end_lat, end_group, end_frame, threshold))
         cursor = connection.fetchall()
-        return [to_geojson(trip) for trip in cursor]
+        # TODO parse to geojson (frame trip)
+        return [jsonify(trip) for trip in cursor]
 
 
 def to_geojson(cursor):
