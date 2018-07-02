@@ -12,6 +12,7 @@ from app.point_ride_sharing.controller import point_ride_sharing_controller
 from app.point_trajectory.controller import point_trajectory_controller
 from app.point_trip.controller import point_trip_controller
 from app.ride_sharing.controller import ride_sharing_controller
+from app.ride_sharing_frame.controller import ride_sharing_controller_frame
 
 app = Flask(__name__, static_folder="../frontend/build/",
             template_folder="../frontend/build/")
@@ -44,6 +45,10 @@ app.register_blueprint(ride_sharing_controller,
 
 app.register_blueprint(point_ride_sharing_controller,
                        url_prefix='/point-ride-sharing')
+
+
+app.register_blueprint(ride_sharing_controller_frame,
+                       url_prefix='/ride-sharing-frame')
 
 
 @app.route('/', defaults={'path': ''})

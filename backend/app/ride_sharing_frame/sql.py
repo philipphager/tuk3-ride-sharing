@@ -28,9 +28,7 @@ def get_shared_rides_sql(start_lon,
         SELECT 
             trips.TRIP_ID, 
             trips.GROUP_ID,
-            {lon_lat}, 
-            shared.DISTANCE_START, 
-            shared.DISTANCE_END
+            {lon_lat}
         FROM (
             SELECT GROUP_ID, ID as TRIP_ID,{frame_columns}
             FROM {FRAME_TRIPS_TABLE}
@@ -58,19 +56,23 @@ def get_shared_rides_sql(start_lon,
             AND DISTANCE_END <= {threshold}
         ) shared
         ON trips.TRIP_ID = shared.TRIP_ID
+        ORDER BY trips.TRIP_ID, trips.GROUP_ID
         '''
     return sql
 
 
 def get_start_and_end(trip_id):
-    sql = f'''
-    SELECT 
-        FLOOR(ST / 900) + 1 as start_group,
-        MOD(FLOOR(ST / 30), 30) as start_frame,
-        FLOOR(ET / 900) + 1 as end_group,
-        MOD(FLOOR(ET / 30), 30) as end_frame,
-        OBJ
-    FROM TUK3_HNKS.key_value_trips
-    WHERE ID = {trip_id}
-    '''
+    sql = 'SELECT GROUP_ID,'
+    for i in range(0, 30):
+        sql += f'''
+           Ix + P{i}x AS LON,
+           Iy + P{i}y AS LAT,
+           {i} as FRAME
+           '''
+        sql += ',' if i < 29 else ''
+    sql += f'''
+       FROM {FRAME_TRIPS_TABLE}
+       WHERE ID = {trip_id}
+       ORDER BY GROUP_ID
+       '''
     return sql
