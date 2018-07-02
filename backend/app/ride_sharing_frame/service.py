@@ -1,11 +1,15 @@
+import time
+
 from app.database.hana_connector import HanaConnection
 from app.frame_trip.service import to_geojson
-from app.geojson.frame_converter import _timestamp
+from app.geojson.frame_converter import frame_to_point_trips
 from app.ride_sharing_frame.sql import get_shared_rides_sql, get_start_and_end
 
 
 def get_shared_rides(trip_id, threshold):
     with HanaConnection() as connection:
+        start_time = time.time()
+        # Get data from original trip
         connection.execute(get_start_and_end(trip_id))
         data = connection.fetchall()
         has_data = False
@@ -50,43 +54,15 @@ def get_shared_rides(trip_id, threshold):
             elif (idx + 2) % 3 == 0:
                 if element:
                     end_lat = element
+        print('Get data from trip: {} ms'.format((time.time() - start_time) * 1000))
 
+        start_time = time.time()
+        # get shared rides and format as geojson
         connection.execute(get_shared_rides_sql(start_lon, start_lat, start_group, start_frame, end_lon,
                                                 end_lat, end_group, end_frame, threshold))
         cursor = connection.fetchall()
         trip_data = frame_to_point_trips(cursor)
-        return [to_geojson(*trip) for trip in trip_data]
+        geojson = [to_geojson(*trip) for trip in trip_data]
+        print('Fetch shared rides: {} ms'.format((time.time() - start_time) * 1000))
 
-
-def frame_to_point_trips(cursor):
-    trips = []
-    points = []
-    timestamps = []
-    trip_id = None
-
-    for frame_group in cursor:
-        frame_group = list(frame_group)
-        if trip_id != frame_group[0]:
-            if trip_id:
-                trips.append((trip_id, points, timestamps))
-            trip_id = frame_group[0]
-            points = []
-            timestamps = []
-        frame_group.pop(0)  # remove trip_id
-        group_id = frame_group[0]
-        frames = frame_group[1:]
-        i = 0
-
-        while i < len(frames):
-            if not frames[i] or frames[i] == 0:
-                i += 1
-                continue
-
-            time = _timestamp(group_id, i)
-
-            points.append((frames[i], frames[i + 1]))
-            timestamps.append(time)
-            i += 2
-
-    trips.append((trip_id, points, timestamps))
-    return trips
+        return geojson

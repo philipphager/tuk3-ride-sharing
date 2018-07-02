@@ -49,6 +49,40 @@ def frame_to_point_with_limit(cursor, max_time):
     return points, timestamps
 
 
+def frame_to_point_trips(cursor):
+    trips = []
+    points = []
+    timestamps = []
+    trip_id = None
+
+    for frame_group in cursor:
+        frame_group = list(frame_group)
+        if trip_id != frame_group[0]:
+            if trip_id:
+                trips.append((trip_id, points, timestamps))
+            trip_id = frame_group[0]
+            points = []
+            timestamps = []
+        frame_group.pop(0)  # remove trip_id
+        group_id = frame_group[0]
+        frames = frame_group[1:]
+        i = 0
+
+        while i < len(frames):
+            if not frames[i] or frames[i] == 0:
+                i += 1
+                continue
+
+            time = _timestamp(group_id, i)
+
+            points.append((frames[i], frames[i + 1]))
+            timestamps.append(time)
+            i += 2
+
+    trips.append((trip_id, points, timestamps))
+    return trips
+
+
 def _timestamp(group_id, index_in_array):
     frame = (group_id - 1) * 30 + (index_in_array // 2)
     return frame * 30
