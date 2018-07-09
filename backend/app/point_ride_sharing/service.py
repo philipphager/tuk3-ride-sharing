@@ -19,7 +19,7 @@ def all_trips_to_geojson(cursor):
     for row in cursor:
         trip_id = row[0]
 
-        if not trip_id in trip_to_data:
+        if trip_id not in trip_to_data:
             trip_to_data[trip_id] = {
                 'points': [],
                 'timestamps': []
