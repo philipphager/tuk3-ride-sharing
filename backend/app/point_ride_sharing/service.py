@@ -1,7 +1,7 @@
 from app.database.hana_connector import HanaConnection
 from app.geojson.geojson_utils import create_geojson
-from app.point_ride_sharing.sql import get_shared_rides_sql
 from app.utils import timer
+from app.point_ride_sharing.sql import get_shared_rides_sql
 
 
 @timer
@@ -13,36 +13,30 @@ def get_shared_rides(trip_id, threshold):
 
 
 def all_trips_to_geojson(cursor):
-    current_trip_id = -1
-    trip_id = -1
     trips = []
-    timestamps = []
-    points = []
+    trip_to_data = dict()
 
     for row in cursor:
         trip_id = row[0]
 
-        if trip_id != current_trip_id and len(points) > 0:
-            current_trip_id = trip_id
-            start = timestamps[0]
-            end = timestamps[-1]
-            duration = end - start
-            geojson = create_geojson(trip_id, points, timestamps, start, end, duration)
-            trips.append(geojson)
-            timestamps = []
-            points = []
+        if not trip_id in trip_to_data:
+            trip_to_data[trip_id] = {
+                'points': [],
+                'timestamps': []
+            }
 
         timestamp = row[1]
         lon = row[2]
         lat = row[5]
-        timestamps.append(timestamp)
-        points.append((lon, lat))
+        trip_to_data[trip_id]['points'].append((lon, lat))
+        trip_to_data[trip_id]['timestamps'].append(timestamp)
 
-    if len(points) > 0:
+    for trip_id, data in trip_to_data.items():
+        points = data['points']
+        timestamps = data['timestamps']
         start = timestamps[0]
         end = timestamps[-1]
         duration = end - start
-        geojson = create_geojson(trip_id, points, timestamps, start, end, duration)
-        trips.append(geojson)
+        trips.append(create_geojson(trip_id, points, timestamp, start, end, duration))
 
     return trips
