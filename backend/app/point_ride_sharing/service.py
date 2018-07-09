@@ -37,6 +37,6 @@ def all_trips_to_geojson(cursor):
         start = timestamps[0]
         end = timestamps[-1]
         duration = end - start
-        trips.append(create_geojson(trip_id, points, timestamp, start, end, duration))
+        trips.append(create_geojson(trip_id, points, timestamps, start, end, duration))
 
     return trips
