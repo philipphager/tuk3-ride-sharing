@@ -5,9 +5,9 @@ from app.point_ride_sharing.sql import get_shared_rides_sql
 
 
 @timer
-def get_shared_rides(trip_id, threshold):
+def get_shared_rides(trip_id, max_distance, max_time):
     with HanaConnection() as connection:
-        connection.execute(get_shared_rides_sql(trip_id, threshold))
+        connection.execute(get_shared_rides_sql(trip_id, max_distance, max_time))
         cursor = connection.fetchall()
         return all_trips_to_geojson(cursor)
 
