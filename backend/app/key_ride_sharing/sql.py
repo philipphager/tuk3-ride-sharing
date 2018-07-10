@@ -11,6 +11,8 @@ def get_ride_by_id_sql(trip_id):
     return sql
 
 
+# all trips within selected trip time frame +- 15 mins, because if not we have to check too many nclobs
+# exponentially much for every 5 mins, remove "900" to scan everything possible... 
 def get_shared_ride_candidates_sql(trip_st, trip_end):
     sql = f'''
     SELECT * 

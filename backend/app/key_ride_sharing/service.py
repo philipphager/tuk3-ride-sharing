@@ -21,11 +21,6 @@ def get_shared_rides(trip_id, threshold):
             if geojson_obj_trip is not None:
                 output.append(geojson_obj_trip)
     return output
-#            if trip[0] == 23139000 or trip[0] == 23587000 or trip[0] == 25223000 or trip[0] == 26820000 \
-#                    or trip[0] == 28778000 or trip[0] == 31955000 or trip[0] == 36360000 or trip[0] == 24177000 \
-#                    or trip[0] == 23481000:
-#                continue
-#            print(trip)
 
 
 def to_geojson(cursor, threshold, start_pt, end_pt, start_t, end_t):
@@ -42,7 +37,7 @@ def to_geojson(cursor, threshold, start_pt, end_pt, start_t, end_t):
         time = sample[0]
         timestamps.append(time)
         points.append((sample[1], sample[2]))
-        if time == start_t and ((sample[1] - start_pt[0])**2 + (sample[2] == start_pt[1])**2)**0.5 <= threshold:
+        if time == start_t and ((sample[1] - start_pt[0])**2 + (sample[2] - start_pt[1])**2)**0.5 <= threshold:
             flag_1 = True
         if time == end_t and ((sample[1] - end_pt[0])**2 + (sample[2] - end_pt[1])**2)**0.5 <= threshold:
             flag_2 = True
