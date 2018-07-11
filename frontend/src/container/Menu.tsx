@@ -30,6 +30,7 @@ interface State {
     numberOfTrips: number;
     time: number;
     alreadyFetched: boolean;
+    endpoint: 'point-ride-sharing' | 'key-ride-sharing' | 'frame-ride-sharing' ;
 }
 
 class Menu extends React.Component<Props, State> {
@@ -45,7 +46,8 @@ class Menu extends React.Component<Props, State> {
             isLoading: false,
             numberOfTrips: 0,
             time: 60,
-            alreadyFetched: false
+            alreadyFetched: false,
+            endpoint: 'point-ride-sharing'
         }
     }
 
@@ -67,6 +69,13 @@ class Menu extends React.Component<Props, State> {
 
         return (
             <Row className="menuBar" gutter={24} justify="center" type="flex" align="middle">
+                <Col span={4}>
+                    <Select value={this.state.endpoint} onChange={this.onChangeEndpoint}>
+                        <Select.Option value='point-ride-sharing'>Point</Select.Option>
+                        <Select.Option value='key-ride-sharing'>Key</Select.Option>
+                        <Select.Option value='frame-ride-sharing'>Frame</Select.Option>
+                    </Select>
+                </Col>
                 <Col span={4}>
                     <Row className="menuInfo">
                         Time of Day
@@ -95,6 +104,7 @@ class Menu extends React.Component<Props, State> {
                             min={0}
                             max={1000}
                             step={1}
+                            value={this.state.distance}
                             onChange={this.handleDistanceChange}
                             tipFormatter={this.formatTipMeter}
                         />
@@ -123,6 +133,12 @@ class Menu extends React.Component<Props, State> {
                 </Col>
             </Row>
         );
+    }
+
+    private onChangeEndpoint = (value: any) => {
+        this.setState({
+            endpoint: value
+        })
     }
 
     private formatTipMeter = (value: any) => {
@@ -162,7 +178,7 @@ class Menu extends React.Component<Props, State> {
     private handleRideSharingRequest = (): void => {
         this.props.newRideSharing();
         this.setState({ isLoading: true });
-        axios.get(`/point-ride-sharing/${this.state.selectedTripId}?distance=${this.state.distance}&time=${this.state.time}`)
+        axios.get(`/${this.state.endpoint}/${this.state.selectedTripId}?distance=${this.state.distance}&time=${this.state.time}`)
             .then(response => {
                 if(response.data.data && response.data.data.length > 0) {
                     console.log(response.data.data);
@@ -177,6 +193,9 @@ class Menu extends React.Component<Props, State> {
             })
             .catch((reason: any) => {
                 message.error('Failed to load similary trips');
+                this.setState({
+                    isLoading: false
+                });
             })
     }
 
