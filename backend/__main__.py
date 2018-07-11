@@ -12,8 +12,8 @@ from app.point_trajectory.controller import point_trajectory_controller
 from app.point_trip.controller import point_trip_controller
 from app.ride_sharing.controller import ride_sharing_controller
 
-app = Flask(__name__, static_folder="../frontend/dist/",
-            template_folder="../frontend/dist/")
+app = Flask(__name__, static_folder="../frontend/build/",
+            template_folder="../frontend/build/")
 cors = CORS(app, resources={"/": {"origins": "*"}})
 app.config['CORS_HEADERS'] = 'Content-Type'
 
