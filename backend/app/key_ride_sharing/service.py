@@ -1,22 +1,25 @@
+import ast
+import json
+
 from app.database.hana_connector import HanaConnection
 from app.geojson.geojson_utils import create_geojson
 from app.key_ride_sharing.sql import get_ride_by_id_sql, get_shared_ride_candidates_sql
-import json
-import ast
 
 
 def get_shared_rides(trip_id, threshold):
     with HanaConnection() as connection:
         connection.execute(get_ride_by_id_sql(trip_id))
-        trip_id, start_pt, end_pt, start_t, end_t = unpack_root_trip(connection.fetchone())
-        connection.execute(get_shared_ride_candidates_sql(start_t, end_t))
+        trip_id, start_point, end_point, start_time, end_time = unpack_root_trip(connection.fetchone())
+
+        connection.execute(get_shared_ride_candidates_sql(start_time, end_time))
         cursor = connection.fetchall()
         output = []
-        for trip in cursor:
-            print(trip)
+        for row in cursor:
+            print(row)
             try:
-                geojson_obj_trip = to_geojson(trip, threshold, start_pt, end_pt, start_t, end_t)
-            except:
+                geojson_obj_trip = to_geojson(row, threshold, start_point, end_point, start_time, end_time)
+            except Exception as e:
+                print('Error', e)
                 continue
             if geojson_obj_trip is not None:
                 output.append(geojson_obj_trip)
@@ -37,9 +40,9 @@ def to_geojson(cursor, threshold, start_pt, end_pt, start_t, end_t):
         time = sample[0]
         timestamps.append(time)
         points.append((sample[1], sample[2]))
-        if time == start_t and ((sample[1] - start_pt[0])**2 + (sample[2] - start_pt[1])**2)**0.5 <= threshold:
+        if time == start_t and ((sample[1] - start_pt[0]) ** 2 + (sample[2] - start_pt[1]) ** 2) ** 0.5 <= threshold:
             flag_1 = True
-        if time == end_t and ((sample[1] - end_pt[0])**2 + (sample[2] - end_pt[1])**2)**0.5 <= threshold:
+        if time == end_t and ((sample[1] - end_pt[0]) ** 2 + (sample[2] - end_pt[1]) ** 2) ** 0.5 <= threshold:
             flag_2 = True
 
     start = timestamps[0] if len(timestamps) > 0 else 0
@@ -52,10 +55,9 @@ def to_geojson(cursor, threshold, start_pt, end_pt, start_t, end_t):
 
 def unpack_root_trip(cursor):
     trip_id = int(cursor[0])
-    mbr_obj = cursor[4]
-    mbr = ast.literal_eval(mbr_obj)
-    start_pt = (mbr[0], mbr[1])
-    end_pt = (mbr[2], mbr[3])
-    start_t = cursor[2]
-    end_t = cursor[3]
-    return trip_id, start_pt, end_pt, start_t, end_t
+    minimum_bounding_rect = ast.literal_eval(cursor[4])
+    start_point = (minimum_bounding_rect[0], minimum_bounding_rect[1])
+    end_point = (minimum_bounding_rect[2], minimum_bounding_rect[3])
+    start_time = cursor[2]
+    end_time = cursor[3]
+    return trip_id, start_point, end_point, start_time, end_time

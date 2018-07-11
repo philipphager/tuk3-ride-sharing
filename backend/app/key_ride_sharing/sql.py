@@ -1,7 +1,6 @@
 from app.database.const import KEY_TRIPS_TABLE
 
 
-
 def get_ride_by_id_sql(trip_id):
     sql = f'''
     SELECT *
