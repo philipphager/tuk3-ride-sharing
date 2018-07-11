@@ -1,4 +1,3 @@
-import ast
 import json
 
 from app.database.hana_connector import HanaConnection
@@ -24,7 +23,7 @@ def get_shared_rides(trip_id, max_distance, max_time):
 def to_geojson(row, trip, max_distance, max_time):
     timestamps = []
     points = []
-    trip_id = int(row[0])
+    trip_id = row[0]
     nclob = row[1].read()
     samples = json.loads(nclob)
     start_is_in_distance = False
@@ -61,9 +60,10 @@ def euclidean_distance(x1, x2, y1, y2):
 
 def convert_trip(cursor):
     trip_id = int(cursor[0])
-    minimum_bounding_rect = ast.literal_eval(cursor[4])
-    start_point = (minimum_bounding_rect[0], minimum_bounding_rect[1])
-    end_point = (minimum_bounding_rect[2], minimum_bounding_rect[3])
+    nclob = cursor[1].read()
+    samples = json.loads(nclob)
+    start_point = (samples[0][1], samples[0][2])
+    end_point = (samples[-1][1], samples[-1][2])
     start_time = cursor[2]
     end_time = cursor[3]
     return {
