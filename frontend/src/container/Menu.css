@@ -1,0 +1,13 @@
+.menuBar {
+    background-color: #001529;
+    color: white;
+    padding: 18px;
+}
+
+.ant-slider-mark-text {
+    color: white;
+}
+
+.distanceSlider {
+    width: 200px;
+}
