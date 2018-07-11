@@ -14,6 +14,7 @@ interface Props {
     onDataFrameChange: (x: DataFormats) => void;
     addTrajectoryData: (x: any) => void;
     resetTrajectoryData: () => void;
+    newRideSharing: () => void;
 }
 
 interface State {
@@ -25,6 +26,8 @@ interface State {
     distance: number;
     isLoading: boolean;
     numberOfTrips: number;
+    time: number;
+    alreadyFetched: boolean;
 }
 
 class Menu extends React.Component<Props, State> {
@@ -39,6 +42,8 @@ class Menu extends React.Component<Props, State> {
             distance: 10,
             isLoading: false,
             numberOfTrips: 0,
+            time: 60,
+            alreadyFetched: false
         }
     }
 
@@ -61,18 +66,41 @@ class Menu extends React.Component<Props, State> {
         return (
             <Row className="menuBar" gutter={24} justify="center" type="flex" align="middle">
                 <Col span={4}>
-                    <TimePicker onChange={this.onTimeChange} value={this.state.trajectoryTime} />
+                    <Row className="menuInfo">
+                        Time of Day
+                    </Row>
+                    <Row>
+                        <TimePicker onChange={this.onTimeChange} value={this.state.trajectoryTime} />
+                    </Row>
                 </Col>
                 <Col span={3}>
-                    <Select size="default" style={{ width: '100px'}} value={this.state.selectedTripId} placeholder="Select Trajectory Id" onSelect={this.onTrajectorySelect}>
-                        {selectTrajectoryIdsOptions}
-                    </Select>
+                    <Row className="menuInfo">
+                        Base-Trajectory ID
+                    </Row>
+                    <Row>
+                        <Select size="default" style={{ width: '100px'}} value={this.state.selectedTripId} placeholder="Select Trajectory Id" onSelect={this.onTrajectorySelect}>
+                            {selectTrajectoryIdsOptions}
+                        </Select>
+                    </Row>
                 </Col>
                 <Col span={5}>
-                    <Slider className="distanceSlider" min={0} max={3000} step={1} onChange={this.handleDistanceChange}/>
+                    <Row className="menuInfo">
+                        Max Distance (meter)
+                    </Row>
+                    <Row>
+                        <Slider className="distanceSlider" min={0} max={1000} step={1} onChange={this.handleDistanceChange}/>
+                    </Row>
+                </Col>
+                <Col span={5}>
+                    <Row className="menuInfo">
+                        Time Distance (seconds)
+                    </Row>
+                    <Row>
+                        <Slider className="timeSlider" min={1} max={900} value={this.state.time} step={1} onChange={this.handleTimeChange} />
+                    </Row>
                 </Col>
                 <Col span={2}>
-                    <Button loading={this.state.isLoading} onClick={this.handleRideSharingRequest}>Search</Button>
+                    <Button loading={this.state.isLoading} onClick={this.handleRideSharingRequest} disabled={!this.state.alreadyFetched}>Search</Button>
                 </Col>
                 <Col span={4}>
                     Number of Trips: {this.state.numberOfTrips}
@@ -93,7 +121,6 @@ class Menu extends React.Component<Props, State> {
                     trajectoryIds: response.data.data.trip_ids
                 })
             })
-
     }
 
     private handleDistanceChange = (value: any): void => {
@@ -102,13 +129,20 @@ class Menu extends React.Component<Props, State> {
         })
     }
 
+    private handleTimeChange = (value: any): void => {
+        this.setState({
+            time: value
+        })
+    }
+
     private handleRideSharingRequest = (): void => {
+        this.props.newRideSharing();
         this.setState({ isLoading: true });
-        axios.get(`/ride-sharing/${this.state.selectedTripId}?distance=${this.state.distance}`)
+        axios.get(`/point-ride-sharing/${this.state.selectedTripId}?distance=${this.state.distance}&time=${this.state.time}`)
             .then(response => {
-                if(response.data && response.data.length > 0) {
-                    console.log(response.data);
-                    response.data.forEach((trajectory: any) => {
+                if(response.data.data && response.data.data.length > 0) {
+                    console.log(response.data.data);
+                    response.data.data.forEach((trajectory: any) => {
                         this.props.addTrajectoryData(trajectory);
                     });
                 }
@@ -125,7 +159,8 @@ class Menu extends React.Component<Props, State> {
     private onTrajectorySelect = (value: number): void => {
         this.props.resetTrajectoryData();
         this.setState({
-            selectedTripId: value
+            selectedTripId: value,
+            alreadyFetched: true
         });
         axios.get(`/point-trip/${value}`)
             .then((response: any) => {
@@ -151,6 +186,9 @@ export function mapDispatchToProps(dispatch: Dispatch<actions.MenuAction>) {
         },
         resetTrajectoryData: () => {
             dispatch(actions.resetTrajectoryData())
+        },
+        newRideSharing: () => {
+            dispatch(actions.newRideSharing())
         }
     }
 }

@@ -36,6 +36,16 @@ export function resetTrajectoryData(): IResetTrajectoryData {
     }
 }
 
-export type MapAction = IAddTrajectoryData | IResetTrajectoryData;
+export interface INewRideSharing {
+    type: constants.NEW_RIDE_SHARING
+}
 
-export type MenuAction = IChangeDataFormat | IAddTrajectoryData | IResetTrajectoryData;
+export function newRideSharing(): INewRideSharing {
+    return {
+        type: constants.NEW_RIDE_SHARING
+    }
+}
+
+export type MapAction = IAddTrajectoryData | IResetTrajectoryData | INewRideSharing;
+
+export type MenuAction = IChangeDataFormat | IAddTrajectoryData | IResetTrajectoryData | INewRideSharing;
