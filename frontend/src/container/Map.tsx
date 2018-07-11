@@ -3,6 +3,8 @@ import { Col, Row } from 'antd';
 import hashColor from 'hash-color-material';
 // @ts-ignore
 import hexRgb from 'hex-rgb';
+// @ts-ignore
+import * as TimeFormat from 'hh-mm-ss';
 import * as React from 'react';
 // @ts-ignore
 import Dimensions from 'react-dimensions';
@@ -57,13 +59,13 @@ class Map extends React.Component<Props, any> {
 
         const trajectoryInformation: JSX.Element = (<Row gutter={12}>
             <Col span={4}>
-                Duration: {this.state.tootipData ? this.state.tootipData.duration_time : null}
+                Duration: {this.state.tootipData ? TimeFormat.fromS(this.state.tootipData.duration_time, 'hh:mm:ss') : '-'}
             </Col>
             <Col span={4}>
-                Start: {this.state.tootipData ? this.state.tootipData.start_time : null}
+                Start: {this.state.tootipData ? TimeFormat.fromS(this.state.tootipData.start_time, 'hh:mm:ss') : '-'}
             </Col>
             <Col span={4}>
-                End: {this.state.tootipData ? this.state.tootipData.end_time : null}
+                End: {this.state.tootipData ? TimeFormat.fromS(this.state.tootipData.end_time, 'hh:mm:ss') : '-'}
             </Col>
         </Row>);
 

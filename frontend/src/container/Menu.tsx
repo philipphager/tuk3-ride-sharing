@@ -1,5 +1,7 @@
 import { Button, Col, message, Row, Select, Slider, TimePicker } from "antd";
 import axios from 'axios';
+// @ts-ignore
+import * as TimeFormat from 'hh-mm-ss';
 import * as moment from 'moment';
 import { Moment } from "moment";
 import * as React from "react";
@@ -85,18 +87,32 @@ class Menu extends React.Component<Props, State> {
                 </Col>
                 <Col span={5}>
                     <Row className="menuInfo">
-                        Max Distance (meter)
+                        Max Distance
                     </Row>
                     <Row>
-                        <Slider className="distanceSlider" min={0} max={1000} step={1} onChange={this.handleDistanceChange}/>
+                        <Slider
+                            className="distanceSlider"
+                            min={0}
+                            max={1000}
+                            step={1}
+                            onChange={this.handleDistanceChange}
+                            tipFormatter={this.formatTipMeter}
+                        />
                     </Row>
                 </Col>
                 <Col span={5}>
                     <Row className="menuInfo">
-                        Time Distance (seconds)
+                        Time Distance
                     </Row>
                     <Row>
-                        <Slider className="timeSlider" min={1} max={900} value={this.state.time} step={1} onChange={this.handleTimeChange} />
+                        <Slider
+                            className="timeSlider"
+                            min={1} max={900}
+                            value={this.state.time}
+                            step={1}
+                            onChange={this.handleTimeChange}
+                            tipFormatter={this.formatTip}
+                        />
                     </Row>
                 </Col>
                 <Col span={2}>
@@ -107,6 +123,14 @@ class Menu extends React.Component<Props, State> {
                 </Col>
             </Row>
         );
+    }
+
+    private formatTipMeter = (value: any) => {
+        return value + ' meter'
+    }
+
+    private formatTip = (value: any) => {
+        return TimeFormat.fromS(value, 'mm:ss') + ' minutes'
     }
 
     private onTimeChange = (value: Moment) => {
