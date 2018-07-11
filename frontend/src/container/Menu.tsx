@@ -172,7 +172,7 @@ class Menu extends React.Component<Props, State> {
                 }
                 this.setState({
                     isLoading: false,
-                    numberOfTrips: response.data.length
+                    numberOfTrips: response.data.data.length
                 });
             })
             .catch((reason: any) => {

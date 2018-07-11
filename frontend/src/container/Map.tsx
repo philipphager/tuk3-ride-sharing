@@ -1,4 +1,4 @@
-import { Col, Row } from 'antd';
+import { Col, Row, Slider } from 'antd';
 // @ts-ignore
 import hashColor from 'hash-color-material';
 // @ts-ignore
@@ -37,16 +37,23 @@ class Map extends React.Component<Props, any> {
             },
             isTooltipActive: false,
             tootipData: null,
+            opacity: 100
         }
     }
 
     public render() {
-        const data = this.props.trajectoryData.map((trajData: any) => {
+        const data = this.props.trajectoryData.map((trajData: any, index: number) => {
             console.log(trajData.properties.trip_id);
+            const trajColor = hexRgb(hashColor.getColorFromString(String(trajData.properties.trip_id)), {format: 'array'});
+
+            if (index > 0){
+                trajColor[3] = this.state.opacity;
+            }
+            console.table(trajColor);
             return {
                 type: trajData.type,
                 properties: {
-                    color: hexRgb(hashColor.getColorFromString(String(trajData.properties.trip_id)), {format: 'array'}),
+                    color: trajColor,
                     ...trajData.properties,
                 },
                 geometry: {
@@ -57,7 +64,7 @@ class Map extends React.Component<Props, any> {
             };
         });
 
-        const trajectoryInformation: JSX.Element = (<Row gutter={12}>
+        const trajectoryInformation: JSX.Element = (<Row gutter={18}>
             <Col span={4}>
                 Duration: {this.state.tootipData ? TimeFormat.fromS(this.state.tootipData.duration_time, 'hh:mm:ss') : '-'}
             </Col>
@@ -75,7 +82,16 @@ class Map extends React.Component<Props, any> {
                 <div className="mapInfo">
                     {trajectoryInformation}
                 </div>
-                <ReactMapGL id="map"
+                <div className="mapMenu">
+                    <Slider
+                        className="opacitiySlider"
+                        value={this.state.opacity}
+                        onChange={this.handleOpacityChange}
+                        min={0}
+                        max={255}
+                    />
+                </div>
+                <ReactMapGL id="map" className="mapGl"
                     {...this.state.viewport}
                     mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
                     // mapStyle={process.env.REACT_APP_MAPBOX_STYLE}
@@ -90,6 +106,12 @@ class Map extends React.Component<Props, any> {
             </React.Fragment>
 
         );
+    }
+
+    private handleOpacityChange = (value: any) => {
+        this.setState({
+            opacity: value
+        })
     }
 
     private onHover = (data: any) => {

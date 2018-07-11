@@ -2,3 +2,18 @@
   background-color: #001529;
   color: white;
 }
+
+.mapMenu {
+  position: absolute;
+  z-index: 10;
+  width: 100%;
+}
+
+.mapGl {
+  position: absolute;
+  z-index: 0;
+}
+
+.opacitiySlider {
+  width: 150px;
+}
