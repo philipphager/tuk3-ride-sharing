@@ -1,14 +1,12 @@
-import { Col, Row, Select, Slider, Tag, TimePicker } from "antd";
+import { Button, Col, message, Row, Select, Slider, TimePicker } from "antd";
 import axios from 'axios';
 import * as moment from 'moment';
+import { Moment } from "moment";
 import * as React from "react";
 import { connect, Dispatch } from "react-redux";
 import * as actions from '../actions';
 import { DataFormats } from "../constants";
 import { IStoreState } from "../types";
-
-import { SliderMarks } from "antd/lib/slider";
-import { Moment } from "moment";
 import './Menu.css';
 
 interface Props {
@@ -19,26 +17,28 @@ interface Props {
 }
 
 interface State {
-    isPlaying: boolean;
-    stepSize: number;
     trajectoryTime: Moment;
-    sliderTime: number;
     trajectoryIds: number[];
     selectedTrajectories: number[];
     selectedTime: number;
+    selectedTripId: number;
+    distance: number;
+    isLoading: boolean;
+    numberOfTrips: number;
 }
 
 class Menu extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
-            isPlaying: false,
-            stepSize: 1,
             trajectoryTime: moment(),
-            sliderTime: 43250,
             trajectoryIds: [],
             selectedTrajectories: [],
             selectedTime: 43250,
+            selectedTripId: 22248000,
+            distance: 10,
+            isLoading: false,
+            numberOfTrips: 0,
         }
     }
 
@@ -53,57 +53,29 @@ class Menu extends React.Component<Props, State> {
     }
 
     public render() {
-        const selectFormatOptions: JSX.Element[] = Object.keys(DataFormats).map(key =>
-            (<Select.Option key={key} value={DataFormats[key]}>{key}</Select.Option>)
-        );
-
         const selectTrajectoryIdsOptions: JSX.Element[] = this.state.trajectoryIds.map((value: number) =>
             (<Select.Option key={value} value={value}>{value}</Select.Option>)
         );
 
-        const marks: SliderMarks = {
-            0: '0',
-            43250: '12',
-            86400: '24'
-        };
-
-        let trajectoryIdTags: JSX.Element[]= [];
-        if (this.state.selectedTrajectories.length > 0) {
-            trajectoryIdTags = this.state.selectedTrajectories.map(value => (
-                <Tag closable={true} afterClose={() => this.handleTagClose(value)} key={value}>{value}</Tag>
-            ));
-        }
 
         return (
             <Row className="menuBar" gutter={24} justify="center" type="flex" align="middle">
                 <Col span={4}>
-                    <Select size="default" style={{ width: '100px'}} value={this.props.dataFormat} onChange={ this.onDataFormChange }>
-                        {selectFormatOptions}
-                    </Select>
-                </Col>
-                <Col span={4}>
                     <TimePicker onChange={this.onTimeChange} value={this.state.trajectoryTime} />
                 </Col>
-                <Col span={4}>
-                    <Select size="default" style={{ width: '100px'}} placeholder="Select Trajectory Id" onSelect={this.onTrajectorySelect}>
+                <Col span={3}>
+                    <Select size="default" style={{ width: '100px'}} value={this.state.selectedTripId} placeholder="Select Trajectory Id" onSelect={this.onTrajectorySelect}>
                         {selectTrajectoryIdsOptions}
                     </Select>
                 </Col>
-                <Col span={8}>
-                    <Row>
-                        {trajectoryIdTags ? trajectoryIdTags : null}
-                    </Row>
-                    <Row>
-                        <Slider
-                            min={1}
-                            max={86400}
-                            marks={marks}
-                            value={this.state.sliderTime}
-                            tipFormatter={this.handleFormat}
-                            onChange={this.handleSliderTimeChange}
-                            onAfterChange={this.handleSliderTimeChangeStop}
-                        />
-                    </Row>
+                <Col span={5}>
+                    <Slider className="distanceSlider" min={0} max={3000} step={1} onChange={this.handleDistanceChange}/>
+                </Col>
+                <Col span={2}>
+                    <Button loading={this.state.isLoading} onClick={this.handleRideSharingRequest}>Search</Button>
+                </Col>
+                <Col span={4}>
+                    Number of Trips: {this.state.numberOfTrips}
                 </Col>
             </Row>
         );
@@ -111,70 +83,55 @@ class Menu extends React.Component<Props, State> {
 
     private onTimeChange = (value: Moment) => {
         this.setState({
-            trajectoryTime: value,
+            trajectoryTime: value
         })
-    }
-
-    private onTrajectorySelect = (value: number): void => {
-        if(this.state.selectedTrajectories.indexOf(value) === -1) {
-            this.setState({
-                selectedTrajectories: [... this.state.selectedTrajectories, value]
-            });
-        }
-        axios.get(`/${this.props.dataFormat}/${value}?max_time=${this.state.selectedTime}`)
+        const seconds: number = value.diff(moment().startOf('day'), 'seconds');
+        axios.get(`/${this.props.dataFormat}/?limit=1000&offset=0&time=${seconds}`)
             .then(response => {
-                this.props.addTrajectoryData(response.data.data);
-            })
-    }
-
-    private onDataFormChange = (value: DataFormats): void => {
-        this.props.onDataFrameChange(value);
-        axios.get(`/${value}/?limit=1000&offset=0`)
-            .then(response => {
+                console.log(response);
                 this.setState({
                     trajectoryIds: response.data.data.trip_ids
                 })
             })
+
     }
 
-    private handleTagClose = (value: number): void => {
-        const indexRemoveTag = this.state.selectedTrajectories.indexOf(value);
-        const newTrajectoryIDs = [
-            ...this.state.selectedTrajectories.slice(0, indexRemoveTag),
-            ...this.state.selectedTrajectories.slice(indexRemoveTag + 1)
-        ]
+    private handleDistanceChange = (value: any): void => {
         this.setState({
-            selectedTrajectories: newTrajectoryIDs
+            distance: value
         })
     }
 
-    private handleSliderTimeChange = (value: number): void => {
-        this.setState({
-            sliderTime: value,
-        });
-    }
-
-    private handleSliderTimeChangeStop = (value: number): void => {
-        this.setState({
-            selectedTime: value
-        })
-        this.handleTrajectoryUpdate();
-    }
-
-    private handleFormat = (value: number): string => {
-        const hour: number = Number((`0${Math.floor(value / (60 * 60))}`).slice(-2));
-        const minute: number = Number((`00${Math.floor((value - (60 * 60 * hour)) / 60)}`).slice(-2));
-        return`${hour}:${minute} | ${value}`;
-    }
-
-    private handleTrajectoryUpdate = (): void => {
-        this.props.resetTrajectoryData();
-        this.state.selectedTrajectories.forEach(value => {
-            axios.get(`/${this.props.dataFormat}/${value}?max_time=${this.state.selectedTime}`)
+    private handleRideSharingRequest = (): void => {
+        this.setState({ isLoading: true });
+        axios.get(`/ride-sharing/${this.state.selectedTripId}?distance=${this.state.distance}`)
             .then(response => {
+                if(response.data && response.data.length > 0) {
+                    console.log(response.data);
+                    response.data.forEach((trajectory: any) => {
+                        this.props.addTrajectoryData(trajectory);
+                    });
+                }
+                this.setState({
+                    isLoading: false,
+                    numberOfTrips: response.data.length
+                });
+            })
+            .catch((reason: any) => {
+                message.error('Failed to load similary trips');
+            })
+    }
+
+    private onTrajectorySelect = (value: number): void => {
+        this.props.resetTrajectoryData();
+        this.setState({
+            selectedTripId: value
+        });
+        axios.get(`/point-trip/${value}`)
+            .then((response: any) => {
+                console.log(response.data.data);
                 this.props.addTrajectoryData(response.data.data);
             })
-        })
     }
 }
 

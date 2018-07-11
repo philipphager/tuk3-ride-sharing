@@ -11,7 +11,6 @@ def get_shared_rides(trip_id, max_distance, max_time):
         cursor = connection.fetchall()
         return all_trips_to_geojson(cursor)
 
-
 def all_trips_to_geojson(cursor):
     trips = []
     trip_to_data = dict()
