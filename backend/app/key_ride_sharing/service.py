@@ -1,61 +1,73 @@
+import json
+
 from app.database.hana_connector import HanaConnection
 from app.geojson.geojson_utils import create_geojson
 from app.key_ride_sharing.sql import get_ride_by_id_sql, get_shared_ride_candidates_sql
-import json
-import ast
 
 
-def get_shared_rides(trip_id, threshold):
+def get_shared_rides(trip_id, max_distance, max_time):
     with HanaConnection() as connection:
         connection.execute(get_ride_by_id_sql(trip_id))
-        trip_id, start_pt, end_pt, start_t, end_t = unpack_root_trip(connection.fetchone())
-        connection.execute(get_shared_ride_candidates_sql(start_t, end_t))
+        trip = convert_trip(connection.fetchone())
+
+        connection.execute(get_shared_ride_candidates_sql(trip['start_time'], trip['end_time']))
         cursor = connection.fetchall()
-        output = []
-        for trip in cursor:
-            print(trip)
-            try:
-                geojson_obj_trip = to_geojson(trip, threshold, start_pt, end_pt, start_t, end_t)
-            except:
-                continue
-            if geojson_obj_trip is not None:
-                output.append(geojson_obj_trip)
-    return output
+        trips = []
+        for row in cursor:
+            shared_trip = to_geojson(row, trip, max_distance, max_time)
+            if shared_trip:
+                trips.append(shared_trip)
+    return trips
 
 
-def to_geojson(cursor, threshold, start_pt, end_pt, start_t, end_t):
+def to_geojson(row, trip, max_distance, max_time):
     timestamps = []
     points = []
+    trip_id = row[0]
+    nclob = row[1].read()
+    samples = json.loads(nclob)
+    start_is_in_distance = False
+    end_is_in_distance = False
+    geojson = None
+
+    for sample in samples:
+        timestamp = sample[0]
+        timestamps.append(timestamp)
+        points.append((sample[1], sample[2]))
+
+        if euclidean_distance(sample[1], trip['start_point'][0], sample[2], trip['start_point'][1]) <= max_distance \
+                and abs(trip['start_time'] - timestamp) <= max_time:
+            start_is_in_distance = True
+
+        if euclidean_distance(sample[1], trip['end_point'][0], sample[2], trip['end_point'][1]) <= max_distance \
+                and abs(trip['end_time'] - timestamp) <= max_time:
+            end_is_in_distance = True
+
+    if start_is_in_distance and end_is_in_distance:
+        start = timestamps[0]
+        end = timestamps[-1]
+        duration = end - start
+        geojson = create_geojson(trip_id, points, timestamps, start, end, duration)
+
+    return geojson
+
+
+def euclidean_distance(x1, x2, y1, y2):
+    return ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
+
+
+def convert_trip(cursor):
     trip_id = int(cursor[0])
     nclob = cursor[1].read()
     samples = json.loads(nclob)
-    flag_1 = False
-    flag_2 = False
-    output = None
-
-    for sample in samples:
-        time = sample[0]
-        timestamps.append(time)
-        points.append((sample[1], sample[2]))
-        if time == start_t and ((sample[1] - start_pt[0])**2 + (sample[2] - start_pt[1])**2)**0.5 <= threshold:
-            flag_1 = True
-        if time == end_t and ((sample[1] - end_pt[0])**2 + (sample[2] - end_pt[1])**2)**0.5 <= threshold:
-            flag_2 = True
-
-    start = timestamps[0] if len(timestamps) > 0 else 0
-    end = timestamps[-1] if len(timestamps) > 0 else 0
-    duration = end - start
-    if flag_1 and flag_2:
-        output = create_geojson(trip_id, points, timestamps, start, end, duration)
-    return output
-
-
-def unpack_root_trip(cursor):
-    trip_id = int(cursor[0])
-    mbr_obj = cursor[4]
-    mbr = ast.literal_eval(mbr_obj)
-    start_pt = (mbr[0], mbr[1])
-    end_pt = (mbr[2], mbr[3])
-    start_t = cursor[2]
-    end_t = cursor[3]
-    return trip_id, start_pt, end_pt, start_t, end_t
+    start_point = (samples[0][1], samples[0][2])
+    end_point = (samples[-1][1], samples[-1][2])
+    start_time = cursor[2]
+    end_time = cursor[3]
+    return {
+        'trip_id': trip_id,
+        'start_point': start_point,
+        'end_point': end_point,
+        'start_time': start_time,
+        'end_time': end_time
+    }
