@@ -3,8 +3,10 @@ import json
 from app.database.hana_connector import HanaConnection
 from app.geojson.geojson_utils import create_geojson
 from app.key_ride_sharing.sql import get_ride_by_id_sql, get_shared_ride_candidates_sql
+from app.utils import timer
 
 
+@timer
 def get_shared_rides(trip_id, max_distance, max_time):
     with HanaConnection() as connection:
         connection.execute(get_ride_by_id_sql(trip_id))
