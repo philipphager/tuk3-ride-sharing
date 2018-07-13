@@ -48,12 +48,11 @@ def get_shared_rides_sql(start_lon,
 def get_start_and_end(trip_id):
     sql = f'''
     SELECT 
-        FLOOR(ST / 900) + 1 as start_group,
-        MOD(FLOOR(ST / 30), 30) as start_frame,
-        FLOOR(ET / 900) + 1 as end_group,
-        MOD(FLOOR(ET / 30), 30) as end_frame,
-        OBJ
-    FROM TUK3_HNKS.key_value_trips
+        FLOOR(START_TIME / 900) + 1 as start_group,
+        MOD(FLOOR(START_TIME / 30), 30) as start_frame,
+        FLOOR(END_TIME / 900) + 1 as end_group,
+        MOD(FLOOR(END_TIME / 30), 30) as end_frame,
+    FROM TUK3_HNKS.FRAME_TIMES
     WHERE ID = {trip_id}
     '''
     return sql
