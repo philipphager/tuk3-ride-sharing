@@ -12,7 +12,7 @@ from app.point_ride_sharing.controller import point_ride_sharing_controller
 from app.point_trajectory.controller import point_trajectory_controller
 from app.point_trip.controller import point_trip_controller
 from app.ride_sharing.controller import ride_sharing_controller
-from app.ride_sharing_frame.controller import ride_sharing_controller_frame
+from app.frame_ride_sharing.controller import ride_sharing_controller_frame
 
 app = Flask(__name__, static_folder="../frontend/build/",
             template_folder="../frontend/build/")

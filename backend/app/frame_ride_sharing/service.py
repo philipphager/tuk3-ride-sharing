@@ -3,7 +3,7 @@ import time
 from app.database.hana_connector import HanaConnection
 from app.frame_trip.service import to_geojson
 from app.geojson.frame_converter import frame_to_point_trips
-from app.ride_sharing_frame.sql import get_shared_rides_sql, get_start_and_end
+from app.frame_ride_sharing.sql import get_shared_rides_sql, get_start_and_end
 
 
 def get_shared_rides(trip_id, threshold):

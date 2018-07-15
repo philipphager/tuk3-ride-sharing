@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 
-from app.ride_sharing_frame.service import get_shared_rides
+from app.frame_ride_sharing.service import get_shared_rides
 
 ride_sharing_controller_frame = Blueprint('shared_rides_frame', __name__)
 
