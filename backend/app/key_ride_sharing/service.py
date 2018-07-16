@@ -16,9 +16,9 @@ def get_shared_rides(trip_id, max_distance, max_time):
         cursor = connection.fetchall()
         trips = []
         for row in cursor:
-            cursor = match_mbr(row, trip)
-            if cursor:
-                shared_trip = to_geojson(cursor, trip, max_distance, max_time)
+            new_row = match_mbr(row, trip)
+            if new_row:
+                shared_trip = to_geojson(new_row, trip, max_distance, max_time)
                 if shared_trip:
                     trips.append(shared_trip)
     return trips
@@ -68,21 +68,24 @@ def convert_trip(cursor):
     end_point = (samples[-1][1], samples[-1][2])
     start_time = cursor[2]
     end_time = cursor[3]
+    mbr = ast.literal_eval(cursor[4])
     return {
         'trip_id': trip_id,
         'start_point': start_point,
         'end_point': end_point,
         'start_time': start_time,
-        'end_time': end_time
+        'end_time': end_time,
+        'mbr': mbr
     }
 
 
 def match_mbr(cursor, trip):
-    mbr_obj = cursor[4]
-    mbr = ast.literal_eval(mbr_obj)
+    cursor_mbr = ast.literal_eval(cursor[4])
+    print(cursor_mbr)
+    print(trip['mbr'])
 
-    if (trip['start_point'][0] > mbr[0] and trip['start_point'][1] > mbr[1]
-            and trip['end_point'][0] < mbr[2] and trip['end_point'][1] < mbr[3]):
+    if (cursor_mbr[0] < trip['mbr'][2] and cursor_mbr[2] > trip['mbr'][0]
+            and cursor_mbr[1] < trip['mbr'][3] and cursor_mbr[3] > trip['mbr'][1]):
         return cursor
     else:
         return None
