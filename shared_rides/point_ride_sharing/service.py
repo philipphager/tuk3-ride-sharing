@@ -26,14 +26,13 @@ class RideSharing:
             cursor = connection.fetchall()
 
             for [trip_id] in cursor:
-                trips = self.get_shared_rides(trip_id)
+                trips = self.get_shared_rides(connection, trip_id)
                 self.trip_to_shared_rides[trip_id] = trips
                 print('Trip id:', trip_id, 'Ride sharing candidates:', trips)
 
-    def get_shared_rides(self, trip_id):
-        with HanaConnection() as connection:
-            connection.execute(get_shared_rides_sql(trip_id, self.distance, self.time))
-            return [trip for [trip] in connection.fetchall()]
+    def get_shared_rides(self, connection, trip_id):
+        connection.execute(get_shared_rides_sql(trip_id, self.distance, self.time))
+        return [trip for [trip] in connection.fetchall()]
 
     def save_to_file(self):
         with open(self.output, mode='a', encoding='utf-8') as f:
