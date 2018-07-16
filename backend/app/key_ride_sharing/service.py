@@ -1,10 +1,11 @@
-import json
 import ast
+import json
 
-from app.utils import timer
 from app.database.hana_connector import HanaConnection
 from app.geojson.geojson_utils import create_geojson
 from app.key_ride_sharing.sql import get_ride_by_id_sql, get_shared_ride_candidates_sql
+from app.utils import timer
+
 
 @timer
 def get_shared_rides(trip_id, max_distance, max_time):
@@ -16,9 +17,8 @@ def get_shared_rides(trip_id, max_distance, max_time):
         cursor = connection.fetchall()
         trips = []
         for row in cursor:
-            cursor = match_mbr(row, trip)
-            if cursor:
-                shared_trip = to_geojson(cursor, trip, max_distance, max_time)
+            if not mbrs_are_disjunct(row, trip):
+                shared_trip = to_geojson(row, trip, max_distance, max_time)
                 if shared_trip:
                     trips.append(shared_trip)
     return trips
@@ -68,21 +68,20 @@ def convert_trip(cursor):
     end_point = (samples[-1][1], samples[-1][2])
     start_time = cursor[2]
     end_time = cursor[3]
+    mbr = cursor[4]
     return {
         'trip_id': trip_id,
         'start_point': start_point,
         'end_point': end_point,
         'start_time': start_time,
-        'end_time': end_time
+        'end_time': end_time,
+        'mbr': mbr
     }
 
 
-def match_mbr(cursor, trip):
-    mbr_obj = cursor[4]
-    mbr = ast.literal_eval(mbr_obj)
+def mbrs_are_disjunct(row, trip):
+    mbr = ast.literal_eval(trip['mbr'])
+    candidate_mbr = ast.literal_eval(row[4])
 
-    if (trip['start_point'][0] > mbr[0] and trip['start_point'][1] > mbr[1]
-            and trip['end_point'][0] < mbr[2] and trip['end_point'][1] < mbr[3]):
-        return cursor
-    else:
-        return None
+    return candidate_mbr[0] > mbr[2] or candidate_mbr[2] < mbr[0] \
+           or candidate_mbr[1] > mbr[3] or candidate_mbr[3] < mbr[1]
