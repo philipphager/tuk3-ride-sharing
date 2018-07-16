@@ -13,6 +13,7 @@ def cli():
 @click.option('--distance', required=True, help='Max distance from start and endpoint in meter.', type=int)
 @click.option('--time', required=True, help='Max time distance from start and endpoint in seconds.', type=int)
 def shared_rides(output, distance, time):
+    distance = distance / 111120  # 1 Degree = 60 min, 1 min = 1852 m, 60 * 1852
     ride_sharing = RideSharing(output, distance, time)
     ride_sharing.run()
 
