@@ -48,7 +48,7 @@ app.register_blueprint(point_ride_sharing_controller,
 
 
 app.register_blueprint(ride_sharing_controller_frame,
-                       url_prefix='/ride-sharing-frame')
+                       url_prefix='/frame-ride-sharing')
 
 
 @app.route('/', defaults={'path': ''})
