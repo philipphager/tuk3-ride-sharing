@@ -6,6 +6,7 @@ from app.database.hana_connector import HanaConnection
 from app.geojson.geojson_utils import create_geojson
 from app.key_ride_sharing.sql import get_ride_by_id_sql, get_shared_ride_candidates_sql
 
+
 @timer
 def get_shared_rides(trip_id, max_distance, max_time):
     with HanaConnection() as connection:
@@ -16,9 +17,8 @@ def get_shared_rides(trip_id, max_distance, max_time):
         cursor = connection.fetchall()
         trips = []
         for row in cursor:
-            new_row = match_mbr(row, trip)
-            if new_row:
-                shared_trip = to_geojson(new_row, trip, max_distance, max_time)
+            if match_mbr(row, trip):
+                shared_trip = to_geojson(row, trip, max_distance, max_time)
                 if shared_trip:
                     trips.append(shared_trip)
     return trips
@@ -81,11 +81,8 @@ def convert_trip(cursor):
 
 def match_mbr(cursor, trip):
     cursor_mbr = ast.literal_eval(cursor[4])
-    print(cursor_mbr)
-    print(trip['mbr'])
-
     if (cursor_mbr[0] < trip['mbr'][2] and cursor_mbr[2] > trip['mbr'][0]
             and cursor_mbr[1] < trip['mbr'][3] and cursor_mbr[3] > trip['mbr'][1]):
-        return cursor
+        return True
     else:
-        return None
+        return False
