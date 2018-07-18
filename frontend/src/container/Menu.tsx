@@ -70,11 +70,14 @@ class Menu extends React.Component<Props, State> {
         return (
             <Row className="menuBar" gutter={24} justify="center" type="flex" align="middle">
                 <Col span={4}>
-                    <Select value={this.state.endpoint} onChange={this.onChangeEndpoint}>
-                        <Select.Option value='point-ride-sharing'>Point</Select.Option>
-                        <Select.Option value='key-ride-sharing'>Key</Select.Option>
-                        <Select.Option value='frame-ride-sharing'>Frame</Select.Option>
-                    </Select>
+                    <Row className="menuInfo">Endpoint</Row>
+                    <Row>
+                        <Select value={this.state.endpoint} onChange={this.onChangeEndpoint}>
+                            <Select.Option value='point-ride-sharing'>Point</Select.Option>
+                            <Select.Option value='key-ride-sharing'>Key</Select.Option>
+                            <Select.Option value='frame-ride-sharing'>Frame</Select.Option>
+                        </Select>
+                    </Row>
                 </Col>
                 <Col span={4}>
                     <Row className="menuInfo">
