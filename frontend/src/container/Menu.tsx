@@ -69,7 +69,7 @@ class Menu extends React.Component<Props, State> {
 
         return (
             <Row className="menuBar" gutter={24} justify="center" type="flex" align="middle">
-                <Col span={4}>
+                <Col span={2}>
                     <Row className="menuInfo">Endpoint</Row>
                     <Row>
                         <Select value={this.state.endpoint} onChange={this.onChangeEndpoint}>
@@ -79,7 +79,7 @@ class Menu extends React.Component<Props, State> {
                         </Select>
                     </Row>
                 </Col>
-                <Col span={4}>
+                <Col span={3}>
                     <Row className="menuInfo">
                         Time of Day
                     </Row>
@@ -97,7 +97,7 @@ class Menu extends React.Component<Props, State> {
                         </Select>
                     </Row>
                 </Col>
-                <Col span={5}>
+                <Col span={4}>
                     <Row className="menuInfo">
                         Max Distance
                     </Row>
@@ -113,7 +113,7 @@ class Menu extends React.Component<Props, State> {
                         />
                     </Row>
                 </Col>
-                <Col span={5}>
+                <Col span={4}>
                     <Row className="menuInfo">
                         Time Distance
                     </Row>
@@ -131,7 +131,7 @@ class Menu extends React.Component<Props, State> {
                 <Col span={2}>
                     <Button loading={this.state.isLoading} onClick={this.handleRideSharingRequest} disabled={!this.state.alreadyFetched}>Search</Button>
                 </Col>
-                <Col span={4}>
+                <Col span={3}>
                     Number of Trips: {this.state.numberOfTrips}
                 </Col>
             </Row>
