@@ -50,7 +50,7 @@ class RideSharing:
         with open(self.output, mode='w', encoding='utf-8') as f:
             writer = csv.writer(f)
             writer.writerow(['trip_id', 'count', 'shared_ride_ids'])
-            for trip_id, shared_rides in self.trip_to_shared_rides.items():
+            for trip_id, shared_rides in sorted(self.trip_to_shared_rides.items()):
                 count = len(shared_rides)
                 rides = ','.join(str(ride) for ride in shared_rides)
                 print('Saving to file trip id:', trip_id, 'ride count:', count)
