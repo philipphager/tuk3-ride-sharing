@@ -21,7 +21,6 @@ class RideSharing:
 
     def run(self):
         self.get_all_shared_rides()
-        self.save_to_file()
 
     def get_all_shared_rides(self):
         with HanaConnection() as connection:
@@ -34,17 +33,23 @@ class RideSharing:
 
             with Pool(self.threads) as p:
                 for chunk in trip_chunks:
-                    p.apply_async(self.get_shared_rides, args=(chunk,))
+                    p.apply_async(self.get_shared_rides, args=(chunk,), callback=self.save_rides)
                 p.close()
                 p.join()
+            self.save_to_file()
 
     def get_shared_rides(self, trip_ids):
         with HanaConnection() as connection:
-
+            rides = dict()
             for trip_id in trip_ids:
                 print('Progress', len(self.trip_to_shared_rides), 'Trip id:', trip_id)
                 connection.execute(get_shared_rides_sql(trip_id, self.distance, self.time))
-                self.trip_to_shared_rides[trip_id] = [trip for [trip] in connection.fetchall()]
+                rides[trip_id] = [trip for [trip] in connection.fetchall()]
+
+            return rides
+
+    def save_rides(self, rides):
+        self.trip_to_shared_rides.update(rides)
 
     def save_to_file(self):
         with open(self.output, mode='w', encoding='utf-8') as f:
