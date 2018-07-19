@@ -1,4 +1,5 @@
 import csv
+from multiprocessing.pool import Pool
 from os import remove
 import multiprocessing as mp
 
@@ -28,14 +29,17 @@ class RideSharing:
             cursor = connection.fetchall()
 
             chunk_size = 10000
-            trip_chunks = [cursor[i: i + chunk_size] for i in range(0, len(cursor), chunk_size)]
+            trip_ids = [trip for [trip] in cursor]
+            trip_chunks = [trip_ids[i: i + chunk_size] for i in range(0, len(trip_ids), chunk_size)]
 
-            pool = mp.Pool(processes=self.threads)
-            [pool.apply(self.get_shared_rides, args=(chunk,)) for chunk in trip_chunks]
+            with Pool(self.threads) as p:
+                for chunk in trip_chunks:
+                    p.apply_async(self.get_shared_rides, args=(chunk,))
 
-    def get_shared_rides(self, chunk):
+    def get_shared_rides(self, trip_ids):
         with HanaConnection() as connection:
-            for [trip_id] in chunk:
+
+            for trip_id in trip_ids:
                 print('Trip id:', trip_id)
                 connection.execute(get_shared_rides_sql(trip_id, self.distance, self.time))
                 self.trip_to_shared_rides[trip_id] = [trip for [trip] in connection.fetchall()]
