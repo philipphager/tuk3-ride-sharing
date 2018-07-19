@@ -10,7 +10,7 @@ def get_all_trip_ids(time, offset, limit):
     with HanaConnection() as connection:
         group_id = (time // 900) + 1
         connection.execute(get_all_trip_ids_sql(group_id, offset, limit))
-        return trip_ids_to_json(connection.fetchall())
+        return trip_ids_to_json(connection.fetchall()), connection.execution_time
 
 
 @timer
@@ -21,7 +21,7 @@ def get_trip_by_id(trip_id, max_time):
         connection.execute(get_trip_by_id_sql(trip_id, max_group))
         cursor = connection.fetchall()
         points, timestamps = frame_to_point_with_limit(cursor, max_time)
-        return to_geojson(trip_id, points, timestamps)
+        return to_geojson(trip_id, points, timestamps), connection.execution_time
 
 
 def to_geojson(trip_id, points, timestamps):

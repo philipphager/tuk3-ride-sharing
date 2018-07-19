@@ -10,11 +10,11 @@ from app.utils import timer
 def get_all_trajectory_ids():
     with HanaConnection() as connection:
         connection.execute(get_all_trajectory_ids_sql())
-        return trajectory_ids_to_json(connection.fetchall())
+        return trajectory_ids_to_json(connection.fetchall()), connection.execution_time
 
 
 @timer
 def get_trajectory_by_id(trajectory_id):
     with HanaConnection() as connection:
         connection.execute(get_trajectory_by_id_sql(trajectory_id))
-        return frame_to_geojson(connection.fetchall())
+        return frame_to_geojson(connection.fetchall()), connection.execution_time

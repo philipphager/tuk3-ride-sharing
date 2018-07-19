@@ -1,20 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7447a319bc865e75eace4acab2688ef72fe44c71a92c063a11d39d0b15f11230"
-        },
-        "host-environment-markers": {
-            "implementation_name": "cpython",
-            "implementation_version": "3.6.4",
-            "os_name": "posix",
-            "platform_machine": "x86_64",
-            "platform_python_implementation": "CPython",
-            "platform_release": "17.4.0",
-            "platform_system": "Darwin",
-            "platform_version": "Darwin Kernel Version 17.4.0: Sun Dec 17 09:19:54 PST 2017; root:xnu-4570.41.2~1/RELEASE_X86_64",
-            "python_full_version": "3.6.4",
-            "python_version": "3.6",
-            "sys_platform": "darwin"
+            "sha256": "1b6a9037be03778366e9c47ce87ea0cefebf3fe407ae72018b9731d3a76abbae"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -38,24 +25,26 @@
         },
         "flask": {
             "hashes": [
-                "sha256:a080b744b7e345ccfcbc77954861cb05b3c63786e93f2b3875e0913d44b43f05",
-                "sha256:2271c0070dbcb5275fad4a82e29f23ab92682dc45f9dfbc22c02ba9b9322ce48"
+                "sha256:2271c0070dbcb5275fad4a82e29f23ab92682dc45f9dfbc22c02ba9b9322ce48",
+                "sha256:a080b744b7e345ccfcbc77954861cb05b3c63786e93f2b3875e0913d44b43f05"
             ],
+            "index": "pypi",
             "version": "==1.0.2"
         },
         "flask-cors": {
             "hashes": [
-                "sha256:a1bb895b3e98b4325743149ebe0e3a0652537b8e37854f942bde7843f822f129",
-                "sha256:bec996f0603a0693c0ea63c8126e5f8e966bb679cf82e6104b254e9c7f3a7d08"
+                "sha256:e4c8fc15d3e4b4cce6d3b325f2bab91e0e09811a61f50d7a53493bc44242a4f1",
+                "sha256:ecc016c5b32fa5da813ec8d272941cfddf5f6bba9060c405a70285415cbf24c9"
             ],
-            "version": "==3.0.4"
+            "index": "pypi",
+            "version": "==3.0.6"
         },
         "geojson": {
             "hashes": [
-                "sha256:8831556d1ac18805c4955aa881e022e6ddcef44020b315200680eec6dd209e40",
-                "sha256:c8873d12421665f6731b8e4c3b2484a4516c0d9b286c26cb7cffa781d062301a"
+                "sha256:f2baaa99dad7bb4c8276d5b5ff26d9085866f3b271a3847371b030fb20623765"
             ],
-            "version": "==2.3.0"
+            "index": "pypi",
+            "version": "==2.4.0"
         },
         "itsdangerous": {
             "hashes": [
@@ -77,22 +66,24 @@
             "version": "==1.0"
         },
         "pyhana": {
-            "git": "https://github.com/hpi-epic/pyhana.git"
+            "git": "https://github.com/philipphager/pyhana.git",
+            "ref": "918adb35573479c0572411948915c67551e7ccd1"
         },
         "pyhdb": {
-            "git": "https://github.com/hpi-epic/pyhana.git"
+            "git": "https://github.com/philipphager/pyhana.git",
+            "ref": "918adb35573479c0572411948915c67551e7ccd1"
         },
         "six": {
             "hashes": [
-                "sha256:832dc0e10feb1aa2c68dcc57dbb658f1c7e65b9b61af69048abc87a2db00a0eb",
-                "sha256:70e8a77beed4562e7f14fe23a786b54f6296e34344c23bc42f07b15018ff98e9"
+                "sha256:70e8a77beed4562e7f14fe23a786b54f6296e34344c23bc42f07b15018ff98e9",
+                "sha256:832dc0e10feb1aa2c68dcc57dbb658f1c7e65b9b61af69048abc87a2db00a0eb"
             ],
             "version": "==1.11.0"
         },
         "werkzeug": {
             "hashes": [
-                "sha256:d5da73735293558eb1651ee2fddc4d0dedcfa06538b8813a2e20011583c9e49b",
-                "sha256:c3fd7a7d41976d9f44db327260e263132466836cef6f91512889ed60ad26557c"
+                "sha256:c3fd7a7d41976d9f44db327260e263132466836cef6f91512889ed60ad26557c",
+                "sha256:d5da73735293558eb1651ee2fddc4d0dedcfa06538b8813a2e20011583c9e49b"
             ],
             "version": "==0.14.1"
         }

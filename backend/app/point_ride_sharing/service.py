@@ -9,7 +9,8 @@ def get_shared_rides(trip_id, max_distance, max_time):
     with HanaConnection() as connection:
         connection.execute(get_shared_rides_sql(trip_id, max_distance, max_time))
         cursor = connection.fetchall()
-        return all_trips_to_geojson(cursor)
+        return all_trips_to_geojson(cursor), connection.execution_time
+
 
 def all_trips_to_geojson(cursor):
     trips = []
