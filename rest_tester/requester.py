@@ -14,6 +14,7 @@ def run_all_params(input_request, param_data):
     param_names = list(param_data.keys())
     num_parameter_requests = len(param_data[param_names[0]])
     times = []
+    db_times = []
 
     for i in range(num_parameter_requests):
         request_string = input_request
@@ -22,8 +23,9 @@ def run_all_params(input_request, param_data):
 
         r = requests.get(request_string)
         times.append(r.json()['time'])
+        db_times.append(r.json()['db_time'])
 
-    return pd.Series(times)
+    return pd.Series(times), pd.Series(db_times)
 
 
 def run_endpoint(endpoint_data, request_name):
@@ -38,8 +40,9 @@ def run_endpoint(endpoint_data, request_name):
         for param in param_crossval:
             request_string = request_string.replace(f'<{param}>', str(endpoint_data['requests']['crossval'][param][i]))
 
-        output_df[f'{request_name} (distance-{distance})'] = run_all_params(request_string,
-                                                                     endpoint_data['requests']['parameter'])
+        times, db_times = run_all_params(request_string, endpoint_data['requests']['parameter'])
+        output_df[f'{request_name} api_time (distance-{distance})'] = times
+        output_df[f'{request_name} db_time (distance-{distance})'] = db_times
 
     return output_df
 
