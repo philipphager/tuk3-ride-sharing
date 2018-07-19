@@ -21,7 +21,7 @@ def get_shared_rides(trip_id, max_distance, max_time):
                 shared_trip = to_geojson(row, trip, max_distance, max_time)
                 if shared_trip:
                     trips.append(shared_trip)
-    return trips
+    return trips, connection.execution_time
 
 
 def to_geojson(row, trip, max_distance, max_time):
