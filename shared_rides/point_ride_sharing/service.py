@@ -35,6 +35,8 @@ class RideSharing:
             with Pool(self.threads) as p:
                 for chunk in trip_chunks:
                     p.apply_async(self.get_shared_rides, args=(chunk,))
+                p.close()
+                p.join()
 
     def get_shared_rides(self, trip_ids):
         with HanaConnection() as connection:
