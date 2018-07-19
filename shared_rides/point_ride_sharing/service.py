@@ -42,7 +42,7 @@ class RideSharing:
         with HanaConnection() as connection:
 
             for trip_id in trip_ids:
-                print('Trip id:', trip_id)
+                print('Progress', len(self.trip_to_shared_rides), 'Trip id:', trip_id)
                 connection.execute(get_shared_rides_sql(trip_id, self.distance, self.time))
                 self.trip_to_shared_rides[trip_id] = [trip for [trip] in connection.fetchall()]
 
