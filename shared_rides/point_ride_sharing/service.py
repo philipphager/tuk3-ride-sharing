@@ -42,7 +42,7 @@ class RideSharing:
         with HanaConnection() as connection:
             rides = dict()
             for trip_id in trip_ids:
-                print('Progress', len(self.trip_to_shared_rides), 'Trip id:', trip_id)
+                print('Chunk progress:', len(rides), 'Trip id:', trip_id)
                 connection.execute(get_shared_rides_sql(trip_id, self.distance, self.time))
                 rides[trip_id] = [trip for [trip] in connection.fetchall()]
 
@@ -50,6 +50,7 @@ class RideSharing:
 
     def save_rides(self, rides):
         self.trip_to_shared_rides.update(rides)
+        print('Accumulate rides:', len(self.trip_to_shared_rides))
 
     def save_to_file(self):
         with open(self.output, mode='w', encoding='utf-8') as f:
