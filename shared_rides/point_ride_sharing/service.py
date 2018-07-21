@@ -27,16 +27,15 @@ class RideSharing:
             connection.execute(get_trip_ids())
             cursor = connection.fetchall()
 
-            chunk_size = 10000
+            chunk_size = 1000
             trip_ids = [trip for [trip] in cursor]
             trip_chunks = [trip_ids[i: i + chunk_size] for i in range(0, len(trip_ids), chunk_size)]
 
             with Pool(self.threads) as p:
                 for chunk in trip_chunks:
-                    p.apply_async(self.get_shared_rides, args=(chunk,), callback=self.save_rides)
+                    p.apply_async(self.get_shared_rides, args=(chunk,), callback=self.save_to_file)
                 p.close()
                 p.join()
-            self.save_to_file()
 
     def get_shared_rides(self, trip_ids):
         with HanaConnection() as connection:
@@ -48,16 +47,11 @@ class RideSharing:
 
             return rides
 
-    def save_rides(self, rides):
-        self.trip_to_shared_rides.update(rides)
-        print('Accumulate rides:', len(self.trip_to_shared_rides))
-
-    def save_to_file(self):
-        with open(self.output, mode='w', encoding='utf-8') as f:
+    def save_to_file(self, rides):
+        print('Saving trips to file:', len(rides))
+        with open(self.output, mode='a', encoding='utf-8') as f:
             writer = csv.writer(f)
-            writer.writerow(['trip_id', 'count', 'shared_ride_ids'])
-            for trip_id, shared_rides in sorted(self.trip_to_shared_rides.items()):
+            for trip_id, shared_rides in rides.items():
                 count = len(shared_rides)
                 rides = ','.join(str(ride) for ride in shared_rides)
-                print('Saving to file trip id:', trip_id, 'ride count:', count)
                 writer.writerow([trip_id, count, rides])
