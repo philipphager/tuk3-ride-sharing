@@ -27,7 +27,7 @@ class RideSharing:
             connection.execute(get_trip_ids())
             cursor = connection.fetchall()
 
-            chunk_size = 10000
+            chunk_size = 100
             trip_ids = [trip for [trip] in cursor]
             trip_chunks = [trip_ids[i: i + chunk_size] for i in range(0, len(trip_ids), chunk_size)]
 
