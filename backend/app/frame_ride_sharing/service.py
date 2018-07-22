@@ -3,7 +3,7 @@ import time
 from app.database.hana_connector import HanaConnection
 from app.frame_trip.service import to_geojson
 from app.geojson.frame_converter import frame_to_point_trips
-from app.frame_ride_sharing.sql import get_shared_rides_sql, get_start_and_end
+from app.frame_ride_sharing.sql import get_shared_rides_ids_sql, get_start_and_end, get_full_shared_rides_sql
 
 
 def get_shared_rides(trip_id, threshold, max_time):
@@ -20,8 +20,28 @@ def get_shared_rides(trip_id, threshold, max_time):
         print('Get data from trip: {} ms'.format((time.time() - start_time) * 1000))
 
         start_time = time.time()
+        shifted_frames = max_time // 30
+        trips = set()
         # get shared rides and format as geojson
-        connection.execute(get_shared_rides_sql(trip_id, start_group, start_frame, end_group, end_frame, threshold))
+        connection.execute(
+            get_shared_rides_ids_sql(trip_id, start_group, start_frame, end_group, end_frame, threshold))
+        cursor = connection.fetchall()
+        trips.update(tuple(cursor))
+
+        # shift frames to get trios based on time
+        for i in range(1, shifted_frames + 1):
+            connection.execute(get_shared_rides_ids_sql(trip_id, start_group, start_frame,
+                                                        end_group, end_frame, threshold, +i))
+            cursor = connection.fetchall()
+            trips.update(tuple(cursor))
+
+            connection.execute(get_shared_rides_ids_sql(trip_id, start_group, start_frame,
+                                                        end_group, end_frame, threshold, -i))
+            cursor = connection.fetchall()
+            trips.update(tuple(cursor))
+
+        cleaned_trips = [trip[0] for trip in trips if trip]
+        connection.execute(get_full_shared_rides_sql(cleaned_trips))
         cursor = connection.fetchall()
         trip_data = frame_to_point_trips(cursor)
         geojson = [to_geojson(*trip) for trip in trip_data]
@@ -31,12 +51,12 @@ def get_shared_rides(trip_id, threshold, max_time):
 
 
 def extract_start_and_end_values(data: list):
-    ''' data example:
+    """ data example:
     [
-        (group0, lon0, frame0 ...)
-        (group1, lon0, frame0 ...)
+        (group0, lon0, frame0, ...)
+        (group1, lon0, frame0, ...)
     ]
-    '''
+    """
     start_data = list(data[0])
     end_data = list(data[-1])
 
