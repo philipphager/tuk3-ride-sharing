@@ -1,6 +1,5 @@
 from app.database.hana_connector import HanaConnection
 from app.geojson.geojson_utils import create_geojson
-from app.geojson.key_converter import unpack_key_value_object
 from app.ride_sharing.sql import get_shared_rides_sql, get_start_and_end
 import json
 

@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 
 from app.point_ride_sharing.service import get_shared_rides
 
-point_ride_sharing_controller = Blueprint('point_shared_rides', __name__)
+point_ride_sharing_controller = Blueprint('point-shared-rides', __name__)
 
 
 @point_ride_sharing_controller.route('/<trip_id>')

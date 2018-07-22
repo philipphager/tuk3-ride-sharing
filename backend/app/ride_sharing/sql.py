@@ -8,20 +8,21 @@ def get_shared_rides_sql(start_lon,
                          end_frame,
                          threshold
                          ):
+
     sql = f'''
         SELECT 
-            key_value.TRIP_ID, 
-            key_value.OBJ, 
-            frame.DISTANCE_START, 
+            key_value.TRIP_ID,
+            key_value.OBJ,
+            frame.DISTANCE_START,
             frame.DISTANCE_END
         FROM (
-            SELECT 
-                ID as TRIP_ID, 
+            SELECT
+                ID as TRIP_ID,
                 OBJ from KEY_VALUE_TRIPS
         ) key_value INNER JOIN (
-            SELECT 
-                TRIP_ID, 
-                DISTANCE_START, 
+            SELECT
+                TRIP_ID,
+                DISTANCE_START,
                 DISTANCE_END
             FROM (
                 SELECT 
