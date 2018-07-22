@@ -28,10 +28,10 @@ def get_shared_rides(trip_id, threshold, max_time):
         cursor = connection.fetchall()
         trips.update(tuple(cursor))
 
-        # shift frames to get trios based on time
+        # shift frames to get trips based on time
         for i in range(1, shifted_frames + 1):
             connection.execute(get_shared_rides_ids_sql(trip_id, start_group, start_frame,
-                                                        end_group, end_frame, threshold, +i))
+                                                        end_group, end_frame, threshold, + i))
             cursor = connection.fetchall()
             trips.update(tuple(cursor))
 
