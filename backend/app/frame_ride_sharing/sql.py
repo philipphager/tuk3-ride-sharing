@@ -6,18 +6,23 @@ def get_shared_rides_ids_sql(trip_id, start_group, start_frame, end_group, end_f
     shift_end_frame = end_frame + frame_shift
     shift_start_group = start_group
     shift_end_group = end_group
-    if start_frame == 0 and frame_shift < 0:
+    if start_frame + frame_shift < 0:
         shift_start_frame = 30 + frame_shift
         shift_start_group = start_group - 1
-    if end_frame == 0 and frame_shift < 0:
+    if end_frame + frame_shift < 0:
         shift_end_frame = 30 + frame_shift
         shift_end_group = end_group - 1
-    if start_frame == 29 and frame_shift > 0:
+    if start_frame + frame_shift > 29:
         shift_start_frame = frame_shift + 1
         shift_start_group = start_group + 1
-    if end_frame == 29 and frame_shift > 0:
+    if end_frame + frame_shift > 29:
         shift_end_frame = frame_shift + 1
         shift_end_group = end_group + 1
+
+    assert 0 <= shift_start_frame <= 29
+    assert 0 <= shift_end_frame <= 29
+    assert 1 <= shift_start_group
+    assert 1 <= shift_end_group
 
     sql = f'''
         SELECT 
@@ -46,7 +51,12 @@ def get_full_shared_rides_sql(trip_ids):
                  Ix + P{i}x AS LON{i},
                  Iy + P{i}y AS LAT{i}'''
         frame_columns += ',' if i < 29 else ''
-    str_trips = ','.join((str(trip) for trip in trip_ids))
+
+    if len(trip_ids) > 0:
+        str_trips = ','.join((str(trip) for trip in trip_ids))
+    else:
+        str_trips = 'NULL'
+
     sql = f'''
         SELECT
             ID, GROUP_ID, {frame_columns}
