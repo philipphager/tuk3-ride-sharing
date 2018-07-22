@@ -18,8 +18,6 @@ def get_shared_ride_candidates_sql(trip_st, trip_end):
     FROM {KEY_TRIPS_TABLE}
     WHERE 
         ST <= {trip_end} 
-        AND ST >= {trip_st} - 900
         AND ET >= {trip_st}
-        AND ET <= {trip_end} + 900
     '''
     return sql
