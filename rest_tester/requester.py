@@ -40,12 +40,13 @@ def run_endpoint(endpoint_data, request_name):
     for i in range(num_crossval_requests):
         request_string = endpoint_data['url']
         distance = str(endpoint_data['requests']['crossval']['distance'][i])
+        time = str(endpoint_data['requests']['crossval']['time'][i])
         for param in param_crossval:
             request_string = request_string.replace(f'<{param}>', str(endpoint_data['requests']['crossval'][param][i]))
 
         times, db_times = run_all_params(request_string, endpoint_data['requests']['parameter'])
-        output_df[f'{request_name} api_time (distance-{distance})'] = times
-        output_df[f'{request_name} db_time (distance-{distance})'] = db_times
+        output_df[f'{request_name} api_time (distance-{distance},time-{time})'] = times
+        output_df[f'{request_name} db_time (distance-{distance},time-{time})'] = db_times
 
     return output_df
 
