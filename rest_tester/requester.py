@@ -22,11 +22,15 @@ def run_all_params(input_request, param_data):
             request_string = request_string.replace(f'<{param}>', str(param_data[param][i]))
 
         r = requests.get(request_string)
-        time = r.json()['time']
-        db_time = r.json()['db_time']
-        times.append(time)
-        db_times.append(db_time)
-        print('requested:', request_string, 'time:', time, 'db_time:', db_time)
+
+        try:
+            time = r.json()['time']
+            db_time = r.json()['db_time']
+            times.append(time)
+            db_times.append(db_time)
+            print('requested:', request_string, 'time:', time, 'db_time:', db_time)
+        except JSONDecodeError:
+            print('requested:', request_string, 'Could not parse JSON:', r.json())
 
     return pd.Series(times), pd.Series(db_times)
 
