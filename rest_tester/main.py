@@ -10,7 +10,7 @@ def cli():
 
 @cli.command()
 @click.option('--input', default='data/test.yml', help='Path to input')
-@click.option('--output', default='data/results.csv', help='Path to output')
+@click.option('--output', default='data/', help='Path to output')
 def run(input, output):
     config = open_yaml(input)
     run_requests(config, output)
