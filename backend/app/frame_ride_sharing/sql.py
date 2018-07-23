@@ -6,18 +6,34 @@ def get_shared_rides_ids_sql(trip_id, start_group, start_frame, end_group, end_f
     shift_end_frame = end_frame + frame_shift
     shift_start_group = start_group
     shift_end_group = end_group
-    if start_frame + frame_shift < 0:
-        shift_start_frame = 30 + frame_shift
-        shift_start_group = start_group - 1
-    if end_frame + frame_shift < 0:
-        shift_end_frame = 30 + frame_shift
-        shift_end_group = end_group - 1
-    if start_frame + frame_shift > 29:
-        shift_start_frame = frame_shift + 1
-        shift_start_group = start_group + 1
-    if end_frame + frame_shift > 29:
-        shift_end_frame = frame_shift + 1
-        shift_end_group = end_group + 1
+
+    if shift_start_frame < 0:
+        if start_group > 1:
+            shift_start_frame = 30 + frame_shift
+            shift_start_group = start_group - 1
+        else:
+            shift_start_frame = 0
+
+    if shift_end_frame < 0:
+        if end_group > 1:
+            shift_end_frame = 30 + frame_shift
+            shift_end_group = end_group - 1
+        else:
+            shift_end_frame = 0
+
+    if shift_start_frame > 29:
+        if start_group < 96:
+            shift_start_frame = frame_shift + 1
+            shift_start_group = start_group + 1
+        else:
+            shift_start_frame = 29
+
+    if shift_end_frame > 29 and end_group < 96:
+        if end_group < 96:
+            shift_end_frame = frame_shift + 1
+            shift_end_group = end_group + 1
+        else:
+            shift_end_frame = 29
 
     assert 0 <= shift_start_frame <= 29
     assert 0 <= shift_end_frame <= 29
