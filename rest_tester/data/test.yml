@@ -1,6 +1,6 @@
 endpoints:
   - name: point-ride-sharing
-    url: http://0.0.0.0:8000/point-ride-sharing/<tripid>?distance=<distance>
+    url: http://0.0.0.0:8000/point-ride-sharing/<tripid>?distance=<distance>&time=<time>
     requests:
       crossval:
         distance:
@@ -43,7 +43,7 @@ endpoints:
           - 35730007
           - 34993046
   - name: key-ride-sharing
-    url: http://0.0.0.0:8000/key-ride-sharing/<tripid>?distance=<distance>
+    url: http://0.0.0.0:8000/key-ride-sharing/<tripid>?distance=<distance>&time=<time>
     requests:
       crossval:
         distance:
@@ -86,7 +86,7 @@ endpoints:
           - 35730007
           - 34993046
   - name: frame-ride-sharing
-    url: http://0.0.0.0:8000/frame-ride-sharing/<tripid>?distance=<distance>
+    url: http://0.0.0.0:8000/frame-ride-sharing/<tripid>?distance=<distance>&time=<time>
     requests:
       crossval:
         distance:
