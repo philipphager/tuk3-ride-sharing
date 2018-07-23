@@ -33,7 +33,7 @@ def run_all_params(input_request, param_data):
         except JSONDecodeError:
             times.append(-1)
             db_times.append(-1)
-            print('requested:', request_string, 'Could not parse JSON:', r.json())
+            print('requested:', request_string, 'Could not parse JSON:', r.text)
 
     return pd.Series(times), pd.Series(db_times)
 
