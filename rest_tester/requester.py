@@ -1,6 +1,7 @@
 import pandas as pd
 import requests
 import yaml
+import json.decoder.JSONDecodeError
 
 
 def open_yaml(input):
