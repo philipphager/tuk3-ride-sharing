@@ -57,16 +57,8 @@ def get_full_rides_sql(subquery):
 
 
 def get_start_and_end(trip_id):
-    sql = 'SELECT GROUP_ID,'
-    for i in range(0, 30):
-        sql += f'''
-           Ix + P{i}x AS LON,
-           {i} as FRAME
-           '''
-        sql += ',' if i < 29 else ''
-    sql += f'''
-       FROM {FRAME_TRIPS_TABLE}
-       WHERE ID = {trip_id}
-       ORDER BY GROUP_ID
-       '''
-    return sql
+    return f'''
+    SELECT START_GROUP, START_FRAME, END_GROUP, END_FRAME
+    FROM FRAME_TIMES
+    WHERE ID = {trip_id}
+    '''
