@@ -1,7 +1,10 @@
 import pandas as pd
 import requests
 import yaml
+from json.decoder import JSONDecodeError
+from time import sleep
 
+DOWNLOAD_DELAY_SEC = 2.0
 
 def open_yaml(input):
     config = None
@@ -22,11 +25,20 @@ def run_all_params(input_request, param_data):
             request_string = request_string.replace(f'<{param}>', str(param_data[param][i]))
 
         r = requests.get(request_string)
-        time = r.json()['time']
-        db_time = r.json()['db_time']
-        times.append(time)
-        db_times.append(db_time)
-        print('requested:', request_string, 'time:', time, 'db_time:', db_time)
+
+        try:
+            time = r.json()['time']
+            db_time = r.json()['db_time']
+            times.append(time)
+            db_times.append(db_time)
+            print('requested:', request_string, 'time:', time, 'db_time:', db_time)
+        except JSONDecodeError:
+            times.append(-1)
+            db_times.append(-1)
+            print('requested:', request_string, 'Could not parse JSON:', r.text)
+        
+        # Add waiting time to avoid server overload
+        sleep(DOWNLOAD_DELAY_SEC) 
 
     return pd.Series(times), pd.Series(db_times)
 
