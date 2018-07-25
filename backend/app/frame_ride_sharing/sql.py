@@ -1,9 +1,8 @@
 from app.database.const import FRAME_TRIPS_TABLE
 
 
-def get_shared_rides_ids_sql(trip_id, start_group, start_frame, end_group, end_frame,
-                             start_frames, end_frames, threshold):
-
+def get_shared_rides(trip_id, start_group, start_frame, end_group, end_frame,
+                     start_frames, end_frames, threshold):
     # Generate conditions for all start frames
     sql = f'''
         SELECT 
@@ -34,10 +33,10 @@ def get_shared_rides_ids_sql(trip_id, start_group, start_frame, end_group, end_f
         '''
 
     sql += ')'
-    return get_all_rides_sql(sql)
+    return get_full_rides_sql(sql)
 
 
-def get_all_rides_sql(subquery):
+def get_full_rides_sql(subquery):
     frame_columns = ""
     for i in range(0, 30):
         frame_columns += f'''
