@@ -11,7 +11,7 @@ def get_shared_rides_ids_sql(trip_id, start_group, start_frame, end_group, end_f
         FROM 
         (SELECT IX + P{start_frame}X as LON, IY + P{start_frame}Y as LAT FROM TUK3_HNKS.FRAME_TRIPS WHERE ID={trip_id} AND GROUP_ID={start_group} LIMIT 1) s_val,
         (SELECT IX + P{end_frame}X as LON, IY + P{end_frame}Y as LAT FROM TUK3_HNKS.FRAME_TRIPS WHERE ID={trip_id}  AND GROUP_ID={end_group} LIMIT 1) e_val,
-        TUK3_HNKS.FRAME_TRIPS s JOIN TUK3_HNKS.FRAME_TRIPS e
+        TUK3_HNKS.FRAME_TRIPS s INNER JOIN TUK3_HNKS.FRAME_TRIPS e
         ON s.id = e.id
         WHERE (
         '''
