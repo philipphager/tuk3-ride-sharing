@@ -7,6 +7,35 @@ from app.geojson.frame_converter import frame_to_point_trips
 from app.utils import timer
 
 
+def get_shifted_frames(frame_id, group_id, shift):
+    shifted_frames = set()
+
+    # All frames after frame
+    current_group_id = group_id
+    for i in range(0, shift + 1):
+        shifted_frame_id = frame_id + i
+        if shifted_frame_id > 29:
+            if current_group_id < 96:
+                current_group_id += 1
+                shifted_frame_id = shifted_frame_id - 30
+            else:
+                shifted_frame_id = 29
+        shifted_frames.add((group_id, shifted_frame_id))
+
+    # All frames before frame
+    for i in reversed(range(0, shift + 1)):
+        shifted_frame_id = frame_id - i
+        if shifted_frame_id < 0:
+            if current_group_id > 1:
+                current_group_id -= 1
+                shifted_frame_id = shifted_frame_id + 30
+            else:
+                shifted_frame_id = 0
+        shifted_frames.add((group_id, shifted_frame_id))
+
+    return shifted_frames
+
+
 @timer
 def get_shared_rides(trip_id, threshold, max_time):
     with HanaConnection() as connection:
@@ -19,28 +48,16 @@ def get_shared_rides(trip_id, threshold, max_time):
         print('Get data from trip: {} ms'.format((time.time() - start_time) * 1000))
 
         start_time = time.time()
-        shifted_frames = max_time // 30
-        trips = set()
-        # get shared rides and format as geojson
-        connection.execute(
-            get_shared_rides_ids_sql(trip_id, start_group, start_frame, end_group, end_frame, threshold))
+        shift = max_time // 30
+        shifted_start_frames = get_shifted_frames(start_frame, start_group, shift)
+        shifted_end_frames = get_shifted_frames(end_frame, end_group, shift)
+
+        connection.execute(get_shared_rides_ids_sql(trip_id, start_group, start_frame, end_group, end_frame,
+                                                    shifted_start_frames, shifted_end_frames, threshold))
         cursor = connection.fetchall()
-        trips.update(tuple(cursor))
+        trips = [trip_id for [trip_id] in cursor]
 
-        # shift frames to get trips based on time
-        for i in range(1, shifted_frames + 1):
-            connection.execute(get_shared_rides_ids_sql(trip_id, start_group, start_frame,
-                                                        end_group, end_frame, threshold, + i))
-            cursor = connection.fetchall()
-            trips.update(tuple(cursor))
-
-            connection.execute(get_shared_rides_ids_sql(trip_id, start_group, start_frame,
-                                                        end_group, end_frame, threshold, -i))
-            cursor = connection.fetchall()
-            trips.update(tuple(cursor))
-
-        cleaned_trips = [trip[0] for trip in trips if trip]
-        connection.execute(get_full_shared_rides_sql(cleaned_trips))
+        connection.execute(get_full_shared_rides_sql(trips))
         cursor = connection.fetchall()
         trip_data = frame_to_point_trips(cursor)
         geojson = [to_geojson(*trip) for trip in trip_data]
