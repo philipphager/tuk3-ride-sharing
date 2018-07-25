@@ -4,23 +4,23 @@ from app.database.const import FRAME_TRIPS_TABLE
 def get_shared_rides_ids_sql(trip_id, start_group, start_frame, end_group, end_frame,
                              start_frames, end_frames, threshold):
 
+    # Generate conditions for all start frames
     sql = f'''
         SELECT 
-            DISTINCT f.ID
+            DISTINCT s.ID
         FROM 
         (SELECT IX + P{start_frame}X as LON, IY + P{start_frame}Y as LAT FROM TUK3_HNKS.FRAME_TRIPS WHERE ID={trip_id} AND GROUP_ID={start_group} LIMIT 1) s_val,
         (SELECT IX + P{end_frame}X as LON, IY + P{end_frame}Y as LAT FROM TUK3_HNKS.FRAME_TRIPS WHERE ID={trip_id}  AND GROUP_ID={end_group} LIMIT 1) e_val,
-        TUK3_HNKS.FRAME_TRIPS f
-        
+        TUK3_HNKS.FRAME_TRIPS s INNER JOIN TUK3_HNKS.FRAME_TRIPS e
+        ON s.id = e.id
         WHERE (
         '''
-    # Generate conditions for all start frames
     for i, frame in enumerate(start_frames):
         # Only one of the end frames has to match
         if i > 0:
             sql += 'OR '
         sql += f'''
-            (group_id = {frame[0]} AND SQRT(POWER(s_val.LON - f.IX + f.P{frame[1]}X, 2) + POWER(s_val.LAT - f.IY + f.P{frame[1]}Y, 2)) <= {threshold})
+            (s.group_id = {frame[0]} AND SQRT(POWER(s_val.LON - s.IX + s.P{frame[1]}X, 2) + POWER(s_val.LAT - s.IY + s.P{frame[1]}Y, 2)) <= {threshold})
         '''
     sql += ') AND ('
 
@@ -30,7 +30,7 @@ def get_shared_rides_ids_sql(trip_id, start_group, start_frame, end_group, end_f
         if i > 0:
             sql += 'OR '
         sql += f'''
-            (group_id = {frame[0]} AND SQRT(POWER(e_val.LON - f.IX + f.P{frame[1]}X, 2) + POWER(e_val.LAT - f.IY + f.P{frame[1]}Y, 2)) <= {threshold})
+            (e.group_id = {frame[0]} AND SQRT(POWER(e_val.LON - e.IX + e.P{frame[1]}X, 2) + POWER(e_val.LAT - e.IY + e.P{frame[1]}Y, 2)) <= {threshold})
         '''
 
     sql += ')'
