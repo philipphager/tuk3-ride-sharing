@@ -20,7 +20,7 @@ def get_shared_rides_ids_sql(trip_id, start_group, start_frame, end_group, end_f
         if i > 0:
             sql += 'OR '
         sql += f'''
-            (s.group_id = {frame[0]} AND SQRT(POWER(s_val.LON - s.IX + s.P{frame[1]}X, 2) + POWER(s_val.LAT - s.IY + s.P{frame[1]}Y, 2)) <= {threshold})
+            (s.group_id = {frame[0]} AND SQRT(POWER(s_val.LON - (s.IX + s.P{frame[1]}X), 2) + POWER(s_val.LAT - (s.IY + s.P{frame[1]}Y), 2)) <= {threshold})
         '''
     sql += ') AND ('
 
@@ -30,7 +30,7 @@ def get_shared_rides_ids_sql(trip_id, start_group, start_frame, end_group, end_f
         if i > 0:
             sql += 'OR '
         sql += f'''
-            (e.group_id = {frame[0]} AND SQRT(POWER(e_val.LON - e.IX + e.P{frame[1]}X, 2) + POWER(e_val.LAT - e.IY + e.P{frame[1]}Y, 2)) <= {threshold})
+            (e.group_id = {frame[0]} AND SQRT(POWER(e_val.LON - (e.IX + e.P{frame[1]}X), 2) + POWER(e_val.LAT - (e.IY + e.P{frame[1]}Y), 2)) <= {threshold})
         '''
 
     sql += ')'
