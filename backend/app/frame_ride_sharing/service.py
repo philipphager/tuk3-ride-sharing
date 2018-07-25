@@ -11,29 +11,20 @@ def get_shifted_frames(frame_id, group_id, shift):
     shifted_frames = set()
 
     # All frames after frame
-    current_group_id = group_id
     for i in range(0, shift + 1):
         shifted_frame_id = frame_id + i
-        if shifted_frame_id > 29:
-            if current_group_id < 96:
-                current_group_id += 1
-                shifted_frame_id = shifted_frame_id - 30
-            else:
-                shifted_frame_id = 29
-        shifted_frames.add((group_id, shifted_frame_id))
+        shifted_group = min(group_id + shifted_frame_id // 30, 96)
+        shifted_frame_id = shifted_frame_id % 30
+        shifted_frames.add((shifted_group, shifted_frame_id))
 
     # All frames before frame
     for i in reversed(range(0, shift + 1)):
-        shifted_frame_id = frame_id - i
-        if shifted_frame_id < 0:
-            if current_group_id > 1:
-                current_group_id -= 1
-                shifted_frame_id = shifted_frame_id + 30
-            else:
-                shifted_frame_id = 0
-        shifted_frames.add((group_id, shifted_frame_id))
+        shifted_frame_id = frame_id + i
+        shifted_group = max(group_id + shifted_frame_id // 30, 1)
+        shifted_frame_id = shifted_frame_id % 30
+        shifted_frames.add((shifted_group, shifted_frame_id))
 
-    return shifted_frames
+    return sorted(shifted_frames)
 
 
 @timer
