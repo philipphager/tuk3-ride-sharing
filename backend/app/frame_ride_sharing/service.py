@@ -1,7 +1,7 @@
 import time
 
 from app.database.hana_connector import HanaConnection
-from app.frame_ride_sharing.sql import get_shared_rides_ids_sql, get_start_and_end, get_full_shared_rides_sql
+from app.frame_ride_sharing.sql import get_shared_rides_ids_sql, get_start_and_end
 from app.frame_trip.service import to_geojson
 from app.geojson.frame_converter import frame_to_point_trips
 from app.utils import timer
@@ -45,10 +45,6 @@ def get_shared_rides(trip_id, threshold, max_time):
 
         connection.execute(get_shared_rides_ids_sql(trip_id, start_group, start_frame, end_group, end_frame,
                                                     shifted_start_frames, shifted_end_frames, threshold))
-        cursor = connection.fetchall()
-        trips = [trip_id for [trip_id] in cursor]
-
-        connection.execute(get_full_shared_rides_sql(trips))
         cursor = connection.fetchall()
         trip_data = frame_to_point_trips(cursor)
         geojson = [to_geojson(*trip) for trip in trip_data]

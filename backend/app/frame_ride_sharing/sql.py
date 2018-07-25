@@ -34,10 +34,10 @@ def get_shared_rides_ids_sql(trip_id, start_group, start_frame, end_group, end_f
         '''
 
     sql += ')'
-    return sql
+    return get_all_rides_sql(sql)
 
 
-def get_full_shared_rides_sql(trip_ids):
+def get_all_rides_sql(subquery):
     frame_columns = ""
     for i in range(0, 30):
         frame_columns += f'''
@@ -45,16 +45,13 @@ def get_full_shared_rides_sql(trip_ids):
                  Iy + P{i}y AS LAT{i}'''
         frame_columns += ',' if i < 29 else ''
 
-    if len(trip_ids) > 0:
-        str_trips = ','.join((str(trip) for trip in trip_ids))
-    else:
-        str_trips = 'NULL'
-
     sql = f'''
         SELECT
             ID, GROUP_ID, {frame_columns}
         FROM {FRAME_TRIPS_TABLE}
-        WHERE ID in ({str_trips})
+        WHERE ID in (
+            {subquery}
+        )
         ORDER BY ID, GROUP_ID
     '''
     return sql
