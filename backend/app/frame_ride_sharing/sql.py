@@ -62,3 +62,4 @@ def get_start_and_end(trip_id):
     FROM FRAME_TIMES
     WHERE ID = {trip_id}
     '''
+  
