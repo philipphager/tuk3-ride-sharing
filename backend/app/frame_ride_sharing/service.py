@@ -33,8 +33,7 @@ def get_shared_rides(trip_id, threshold, max_time):
         start_time = time.time()
         # Get data from original trip
         connection.execute(get_start_and_end(trip_id))
-        data = connection.fetchall()
-        start_group, start_frame, end_group, end_frame = extract_start_and_end_values(data)
+        start_group, start_frame, end_group, end_frame = connection.fetchone()
 
         print('Get data from trip: {} ms'.format((time.time() - start_time) * 1000))
 
@@ -51,43 +50,3 @@ def get_shared_rides(trip_id, threshold, max_time):
         print('Fetch shared rides: {} ms'.format((time.time() - start_time) * 1000))
 
         return geojson, connection.execution_time
-
-
-def extract_start_and_end_values(data: list):
-    """ data example:
-    [
-        (group0, lon0, frame0, ...)
-        (group1, lon0, frame0, ...)
-    ]
-    """
-    start_data = list(data[0])
-    end_data = list(data[-1])
-
-    # Extract start values
-    start_frame = 0
-    start_group = start_data[0]
-    start_data.pop(0)
-    has_data = False
-    for idx, element in enumerate(start_data):
-        if (idx + 1) % 2 == 0:
-            if has_data:
-                start_frame = element
-                break
-        elif idx % 2 == 0:
-            if element:
-                has_data = True
-
-    # Extract end values
-    end_frame = 0
-    end_group = end_data[0]
-    has_data = False
-    for idx, element in enumerate(reversed(end_data)):
-        if idx % 2 == 0:
-            if has_data:
-                break
-            end_frame = element
-        elif (idx + 1) % 2 == 0:
-            if element:
-                has_data = True
-
-    return start_group, start_frame, end_group, end_frame
