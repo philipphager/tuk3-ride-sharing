@@ -1,5 +1,7 @@
 # Build and run
 
+Do not forget to set mapbox api token!
+
 1. Build:
 
 ```bash
