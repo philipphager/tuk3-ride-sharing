@@ -5,7 +5,7 @@ Do not forget to set mapbox api token!
 1. Build:
 
 ```bash
-docker build -t <container-name>
+docker build -t <container-name> .
 ```
 
 2. Run:
