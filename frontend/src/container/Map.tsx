@@ -94,7 +94,6 @@ class Map extends React.Component<Props, any> {
                 <ReactMapGL id="map" className="mapGl"
                     {...this.state.viewport}
                     mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_ACCESS_TOKEN}
-                    mapStyle={process.env.REACT_APP_MAPBOX_STYLE}
                     onViewportChange={this.handleViewportChange}
                 >
                     {data.length ? <DeckGlLayer
