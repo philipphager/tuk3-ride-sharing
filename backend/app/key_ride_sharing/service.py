@@ -13,14 +13,13 @@ def get_shared_rides(trip_id, max_distance, max_time):
         connection.execute(get_ride_by_id_sql(trip_id))
         trip = convert_trip(connection.fetchone())
 
-        connection.execute(get_shared_ride_candidates_sql(trip['start_time'], trip['end_time']))
+        connection.execute(get_shared_ride_candidates_sql(trip, max_distance))
         cursor = connection.fetchall()
         trips = []
         for row in cursor:
-            if not mbrs_are_disjunct(row, trip):
-                shared_trip = to_geojson(row, trip, max_distance, max_time)
-                if shared_trip:
-                    trips.append(shared_trip)
+            shared_trip = to_geojson(row, trip, max_distance, max_time)
+            if shared_trip:
+                trips.append(shared_trip)
     return trips, connection.execution_time
 
 
@@ -39,7 +38,7 @@ def to_geojson(row, trip, max_distance, max_time):
         timestamps.append(timestamp)
         points.append((sample[1], sample[2]))
 
-        if euclidean_distance(sample[1], trip['start_point'][0], sample[2], trip['start_point'][1]) <= max_distance \
+        if not euclidean_distance(sample[1], trip['start_point'][0], sample[2], trip['start_point'][1]) <= max_distance \
                 and abs(trip['start_time'] - timestamp) <= max_time:
             start_is_in_distance = True
 
@@ -68,20 +67,18 @@ def convert_trip(cursor):
     end_point = (samples[-1][1], samples[-1][2])
     start_time = cursor[2]
     end_time = cursor[3]
-    mbr = cursor[4]
+    min_x = cursor[4]
+    min_y = cursor[5]
+    max_x = cursor[6]
+    max_y = cursor[7]
     return {
         'trip_id': trip_id,
         'start_point': start_point,
         'end_point': end_point,
         'start_time': start_time,
         'end_time': end_time,
-        'mbr': mbr
+        'min_x': min_x,
+        'min_y': min_y,
+        'max_x': max_x,
+        'max_y': max_y,
     }
-
-
-def mbrs_are_disjunct(row, trip):
-    mbr = ast.literal_eval(trip['mbr'])
-    candidate_mbr = ast.literal_eval(row[4])
-
-    return candidate_mbr[0] > mbr[2] or candidate_mbr[2] < mbr[0] \
-           or candidate_mbr[1] > mbr[3] or candidate_mbr[3] < mbr[1]
