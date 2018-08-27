@@ -19,10 +19,8 @@ def get_shared_ride_candidates_sql(trip, distance):
     WHERE 
         ST <= {trip['start_time']} 
         AND ET >= {trip['end_time']}
-        AND NOT (
-            MAX_X < {trip['min_x'] - distance }
-            OR MAX_Y < {trip['min_y'] - distance}
-            OR MIN_X > {trip['max_x'] + distance}
-            OR MIN_Y > {trip['max_y'] + distance}
-        )
+        AND MIN_X < {trip['max_x'] + distance }
+        AND MIN_Y < {trip['max_y'] + distance}
+        AND MAX_X > {trip['min_x'] - distance}
+        AND MAX_> > {trip['min_y'] - distance}
     '''
