@@ -22,5 +22,5 @@ def get_shared_ride_candidates_sql(trip, distance):
         AND MIN_X < {trip['max_x'] + distance }
         AND MIN_Y < {trip['max_y'] + distance}
         AND MAX_X > {trip['min_x'] - distance}
-        AND MAX_> > {trip['min_y'] - distance}
+        AND MAX_Y > {trip['min_y'] - distance}
     '''
