@@ -16,7 +16,7 @@ def get_shared_ride_candidates_sql(trip, max_distance, max_time):
     return f'''
     SELECT * 
     FROM {KEY_TRIPS_TABLE}
-    WHERE 
+    WHERE
         ST <= {trip['start_time'] + max_time} 
         AND ET >= {trip['end_time'] - max_time}
         AND MIN_X < {trip['max_x'] + max_distance}

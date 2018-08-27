@@ -13,7 +13,7 @@ def get_shared_rides(trip_id, max_distance, max_time):
         connection.execute(get_ride_by_id_sql(trip_id))
         trip = convert_trip(connection.fetchone())
 
-        connection.execute(get_shared_ride_candidates_sql(trip, max_distance))
+        connection.execute(get_shared_ride_candidates_sql(trip, max_distance, max_time))
         cursor = connection.fetchall()
         trips = []
         for row in cursor:
