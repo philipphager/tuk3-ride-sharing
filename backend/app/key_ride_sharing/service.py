@@ -38,7 +38,7 @@ def to_geojson(row, trip, max_distance, max_time):
         timestamps.append(timestamp)
         points.append((sample[1], sample[2]))
 
-        if not euclidean_distance(sample[1], trip['start_point'][0], sample[2], trip['start_point'][1]) <= max_distance \
+        if euclidean_distance(sample[1], trip['start_point'][0], sample[2], trip['start_point'][1]) <= max_distance \
                 and abs(trip['start_time'] - timestamp) <= max_time:
             start_is_in_distance = True
 
